@@ -59,8 +59,36 @@ namespace XIV.TweenSystem
                     testTransform.CancelTween();
                 }
 
-                testTransform.localScale = startScale;
-                testTransform.ScaleTween(targetScale, duration).AddEasing(EasingFunction.GetEasingFunction(easingFunc));
+                testTransform.position -= Vector3.up * 5f;
+                testTransform.XIVTween()
+                    .ScaleZ(startScale.z, targetScale.z, duration)
+                    .AddEasing(EasingFunction.GetEasingFunction(easingFunc))
+                    .OnComplete(() => Debug.Log("ScaleZ finished"))
+                    .MoveTo(testTransform.position + Vector3.up * 5f, duration * 2f)
+                    .AddEasing(EasingFunction.GetEasingFunction(easingFunc))
+                    .OnComplete(() => Debug.Log("MoveTo Finished"))
+                    .OnCanceled(() =>
+                    {
+                        var scale = prefab.transform.localScale;
+                        int horizontal = 5;
+                        var pos = transform.position;
+                        for (int i = 0; i < testCount; i++)
+                        {
+                            goTestList[i].transform.position = pos;
+                            goTestList[i].transform.localScale = Vector3.one;
+                            pos.x += scale.x;
+                
+                            horizontal--;
+                            if (horizontal == 0)
+                            {
+                                pos.y += scale.y;
+                                pos.x = transform.position.x;
+                                horizontal = 5;
+                            }
+                        }
+                    })
+                    .Start();
+                // testTransform.ScaleTweenX(startScale.x, targetScale.x, duration);
             }
         }
 

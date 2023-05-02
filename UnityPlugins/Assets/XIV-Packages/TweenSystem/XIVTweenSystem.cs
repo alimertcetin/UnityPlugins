@@ -1,41 +1,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XIV.Core.Collections;
+using XIV_Packages.PoolSystem;
 
 namespace XIV.TweenSystem
 {
     internal static class XIVTweenSystem
     {
-        class TweenData
+        class TweenData : IPoolable
         {
-            public GameObject gameObject;
+            public int instanceID;
             public DynamicArray<ITween> tweens;
+            IPool pool;
 
             public TweenData()
             {
                 tweens = new DynamicArray<ITween>(2);
             }
-            
-        }
 
-        static class TweenDataPool
-        {
-            static Queue<TweenData> tweenDatas = new Queue<TweenData>();
-
-            internal static TweenData Get()
+            public void Return()
             {
-                var tweenData = tweenDatas.Count > 0 ? tweenDatas.Dequeue() : new TweenData();
-                return tweenData;
+                pool.Return(this);
             }
 
-            internal static void Return(TweenData tweenData)
+            void IPoolable.OnPoolCreate(IPool pool)
             {
-#if UNITY_EDITOR
-                if (tweenData == null) throw new System.NullReferenceException("tweenData is null");
-#endif
-                tweenData.gameObject = null;
-                tweenData.tweens.Clear();
-                tweenDatas.Enqueue(tweenData);
+                this.pool = pool;
+            }
+
+            void IPoolable.OnPoolReturn()
+            {
+                instanceID = -1;
+                tweens.Clear();
             }
         }
         
@@ -64,7 +60,8 @@ namespace XIV.TweenSystem
                     if (tweenData.tweens.Count == 0)
                     {
                         tweenDatas.RemoveAt(i);
-                        TweenDataPool.Return(tweenData);
+                        tweenLookup.Remove(tweenData.instanceID);
+                        tweenData.Return();
                     }
                 }
             }
@@ -80,17 +77,22 @@ namespace XIV.TweenSystem
                 return helper;
             }
         }
-        
+
+        static HashSet<int> tweenLookup = new HashSet<int>();
+
         internal static void AddTween(Component component, ITween tween)
         {
-            GetTweenData(component).tweens.Add() = tween;
+            var instanceID = component.gameObject.GetInstanceID();
+            var tweenData = GetTweenData(instanceID);
+            tweenData.tweens.Add() = tween;
         }
 
         internal static void CancelTween(Component component)
         {
-            int index = IndexOfTweenData(component);
-            if (index < 0) return;
+            var instanceID = component.gameObject.GetInstanceID();
+            if (tweenLookup.Contains(instanceID) == false) return;
 
+            int index = IndexOfTweenData(instanceID);
             var tweenDatas = Helper.tweenDatas;
             var tweenData = tweenDatas[index];
             tweenDatas.RemoveAt(index);
@@ -104,31 +106,30 @@ namespace XIV.TweenSystem
 
         internal static bool HasTween(Component component)
         {
-            return IndexOfTweenData(component) > -1;
+            return tweenLookup.Contains(component.gameObject.GetInstanceID());
         }
 
-        static TweenData GetTweenData(Component component)
+        static TweenData GetTweenData(int instanceID)
         {
-            int index = IndexOfTweenData(component);
-            if (index > -1)
+            if (tweenLookup.Contains(instanceID))
             {
-                return Helper.tweenDatas[index];
+                return Helper.tweenDatas[IndexOfTweenData(instanceID)];
             }
 
-            var tweenData = TweenDataPool.Get();
-            tweenData.gameObject = component.gameObject;
+            var tweenData = XIVPoolSystem.HasPool<TweenData>() ? XIVPoolSystem.GetItem<TweenData>() : XIVPoolSystem.AddPool(new XIVPool<TweenData>(() => new TweenData())).GetItem();
+            tweenData.instanceID = instanceID;
+            tweenLookup.Add(instanceID);
             Helper.tweenDatas.Add(tweenData);
             return tweenData;
         }
 
-        static int IndexOfTweenData(Component component)
+        static int IndexOfTweenData(int instanceID)
         {
             var tweenDatas = Helper.tweenDatas;
-            var go = component.gameObject;
             int count = tweenDatas.Count;
             for (int i = 0; i < count; i++)
             {
-                if (tweenDatas[i].gameObject == go) return i;
+                if (tweenDatas[i].instanceID == instanceID) return i;
             }
 
             return -1;
