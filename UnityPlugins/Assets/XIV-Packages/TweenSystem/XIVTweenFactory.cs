@@ -117,7 +117,7 @@ namespace XIV.TweenSystem
         
         public XIVTweenFactory MoveX(float from, float to, float duration, EasingFunction.Function easingFunc)
         {
-            var t = GetPooledTween<MoveTweenZ>().Set(component.transform, from, to, duration, easingFunc);
+            var t = GetPooledTween<MoveTweenX>().Set(component.transform, from, to, duration, easingFunc);
             return AddTween(t);
         }
         
