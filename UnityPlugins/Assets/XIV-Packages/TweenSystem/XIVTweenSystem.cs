@@ -10,12 +10,12 @@ namespace XIV.TweenSystem
         class TweenData : IPoolable
         {
             public int instanceID;
-            public DynamicArray<ITween> tweens;
+            public DynamicArray<TweenTimeline> timelines;
             IPool pool;
 
             public TweenData()
             {
-                tweens = new DynamicArray<ITween>(2);
+                timelines = new DynamicArray<TweenTimeline>(2);
             }
 
             public void Return()
@@ -31,7 +31,12 @@ namespace XIV.TweenSystem
             void IPoolable.OnPoolReturn()
             {
                 instanceID = -1;
-                tweens.Clear();
+                for (var i = 0; i < timelines.Count; i++)
+                {
+                    timelines[i].Return();
+                }
+
+                timelines.Clear();
             }
         }
         
@@ -45,19 +50,15 @@ namespace XIV.TweenSystem
                 for (int i = count - 1; i >= 0; i--)
                 {
                     TweenData tweenData = tweenDatas[i];
-                    int tweenCount = tweenData.tweens.Count;
-                    for (int j = tweenCount - 1; j >= 0; j--)
+                    TweenTimeline timeline = tweenData.timelines[0];
+                    timeline.Update();
+                    if (timeline.IsDone())
                     {
-                        ITween tween = tweenData.tweens[j];
-                        tween.Update(Time.deltaTime);
-                        if (tween.IsDone())
-                        {
-                            tween.Complete();
-                            tweenData.tweens.RemoveAt(j);
-                        }
+                        tweenData.timelines.RemoveAt(0);
+                        timeline.Return();
                     }
 
-                    if (tweenData.tweens.Count == 0)
+                    if (tweenData.timelines.Count == 0)
                     {
                         tweenDatas.RemoveAt(i);
                         tweenLookup.Remove(tweenData.instanceID);
@@ -80,33 +81,39 @@ namespace XIV.TweenSystem
 
         static HashSet<int> tweenLookup = new HashSet<int>();
 
-        internal static void AddTween(Component component, ITween tween)
+        [UnityEngine.RuntimeInitializeOnLoadMethod]
+        static void Init()
         {
-            var instanceID = component.gameObject.GetInstanceID();
-            var tweenData = GetTweenData(instanceID);
-            tweenData.tweens.Add() = tween;
+            tweenLookup.Clear();
         }
 
-        internal static void CancelTween(Component component)
+        internal static void AddTween(int instanceID, TweenTimeline tween)
         {
-            var instanceID = component.gameObject.GetInstanceID();
+            var tweenData = GetTweenData(instanceID);
+            tweenData.timelines.Add() = tween;
+        }
+
+        internal static void CancelTween(int instanceID)
+        {
             if (tweenLookup.Contains(instanceID) == false) return;
+            tweenLookup.Remove(instanceID);
 
             int index = IndexOfTweenData(instanceID);
             var tweenDatas = Helper.tweenDatas;
             var tweenData = tweenDatas[index];
             tweenDatas.RemoveAt(index);
+            tweenData.Return();
 
-            int count = tweenData.tweens.Count;
+            int count = tweenData.timelines.Count;
             for (int i = 0; i < count; i++)
             {
-                tweenData.tweens[i].Cancel();
+                tweenData.timelines[i].Cancel();
             }
         }
 
-        internal static bool HasTween(Component component)
+        internal static bool HasTween(int instanceID)
         {
-            return tweenLookup.Contains(component.gameObject.GetInstanceID());
+            return tweenLookup.Contains(instanceID);
         }
 
         static TweenData GetTweenData(int instanceID)

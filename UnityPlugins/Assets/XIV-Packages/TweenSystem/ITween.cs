@@ -1,7 +1,4 @@
-﻿using System;
-using XIV.Core.Utils;
-
-namespace XIV.TweenSystem
+﻿namespace XIV.TweenSystem
 {
     public interface ITween
     {
@@ -9,9 +6,5 @@ namespace XIV.TweenSystem
         bool IsDone();
         void Complete();
         void Cancel();
-        ITween AddEasing(EasingFunction.Function easingFunction);
-        ITween UseUnscaledTime();
-        ITween OnComplete(Action action);
-        ITween OnCanceled(Action action);
     }
 }

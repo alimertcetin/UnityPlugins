@@ -5,68 +5,46 @@ using XIV_Packages.PoolSystem;
 
 namespace XIV.TweenSystem
 {
-    public abstract class TweenDriver<TValueType, TComponentType> : TweenDriver<TValueType>, IPoolable where TComponentType : Component
+    public abstract class TweenDriver<TValueType, TComponentType> : TweenDriver<TValueType> where TComponentType : Component
     {
         internal TComponentType component { get; private set; }
-        internal IPool pool;
 
-        internal TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration)
+        internal TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
         {
-            base.Set(startValue, endValue, duration);
+            base.Set(startValue, endValue, duration, easingFunction);
             this.component = component;
             return this;
         }
 
         protected override void OnComplete()
         {
-            pool.Return(this);
+            component = default;
         }
 
         protected override void OnCancel()
-        {
-            pool.Return(this);
-        }
-
-        void IPoolable.OnPoolCreate(IPool pool)
-        {
-            this.pool = pool;
-        }
-
-        void IPoolable.OnPoolReturn()
         {
             component = default;
         }
     }
 
-    public abstract class TweenDriver<TValueType> : ITween
+    public abstract class TweenDriver<TValueType> : ITween, IPoolable
     {
         protected TValueType startValue;
         protected TValueType endValue;
         protected TValueType currentValue;
-        
-        protected bool hasCompletedCallback;
-        protected bool hasCanceledCallback;
-        protected bool useUnscaledTime;
-        
         protected EasingFunction.Function easingFunction;
-        protected Action onCompleted;
-        protected Action onCanceled;
-
         protected Timer timer;
+        IPool pool;
+        bool hasPool;
 
-        static readonly EasingFunction.Function linear;
-
-        static TweenDriver()
-        {
-            linear = EasingFunction.Linear;
-        }
-
-        protected void Set(TValueType startValue, TValueType endValue, float duration)
+        internal TweenDriver<TValueType> Set(TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
         {
             Clear();
             this.startValue = startValue;
             this.endValue = endValue;
+            this.easingFunction = easingFunction;
             timer = new Timer(duration);
+            return this;
         }
 
         protected abstract void OnUpdate(float normalizedTime);
@@ -74,41 +52,18 @@ namespace XIV.TweenSystem
         protected abstract void OnCancel();
         protected abstract TValueType GetCurrent();
         
-        float GetTime(float normalizedTime)
+        void Clear()
         {
-            return easingFunction.Invoke(0f, 1f, normalizedTime);
-        }
-
-        ITween ITween.AddEasing(EasingFunction.Function easingFunction)
-        {
-            this.easingFunction = easingFunction;
-            return this;
-        }
-
-        ITween ITween.UseUnscaledTime()
-        {
-            useUnscaledTime = true;
-            return this;
-        }
-
-        ITween ITween.OnComplete(Action action)
-        {
-            onCompleted += action;
-            hasCompletedCallback = action != null;
-            return this;
-        }
-
-        ITween ITween.OnCanceled(Action action)
-        {
-            onCanceled = action;
-            hasCanceledCallback = action != null;
-            return this;
+            startValue = default;
+            endValue = default;
+            currentValue = default;
+            timer = default;
         }
 
         void ITween.Update(float deltaTime)
         {
-            timer.Update(useUnscaledTime ? Time.unscaledTime : Time.deltaTime);
-            var easedTime = GetTime(timer.NormalizedTime);
+            timer.Update(deltaTime);
+            var easedTime = easingFunction.Invoke(0f, 1f, timer.NormalizedTime);
             OnUpdate(easedTime);
             currentValue = GetCurrent();
         }
@@ -118,30 +73,24 @@ namespace XIV.TweenSystem
         void ITween.Complete()
         {
             OnComplete();
-            if (hasCompletedCallback) onCompleted.Invoke();
-            
-            Clear();
+            if (hasPool) pool.Return(this);
         }
 
         void ITween.Cancel()
         {
             OnCancel();
-            if (hasCanceledCallback) onCanceled.Invoke();
-            
-            Clear();
+            if (hasPool) pool.Return(this);
         }
-        
-        void Clear()
+
+        void IPoolable.OnPoolCreate(IPool pool)
         {
-            startValue = default;
-            endValue = default;
-            currentValue = default;
-            timer = default;
-            hasCompletedCallback = false;
-            hasCanceledCallback = false;
-            easingFunction = linear;
-            onCompleted = null;
-            onCanceled = null;
+            this.pool = pool;
+            this.hasPool = pool != default;
+        }
+
+        void IPoolable.OnPoolReturn()
+        {
+            Clear();
         }
     }
 }

@@ -49,7 +49,8 @@ namespace XIV.TweenSystem
                     return;
                 }
             }
-            
+
+            var easing = EasingFunction.GetEasingFunction(easingFunc);
             for (int i = 0; i < goTestList.Count; i++)
             {
                 GameObject go = goTestList[i];
@@ -60,35 +61,68 @@ namespace XIV.TweenSystem
                 }
 
                 testTransform.position -= Vector3.up * 5f;
-                testTransform.XIVTween()
-                    .ScaleZ(startScale.z, targetScale.z, duration)
-                    .AddEasing(EasingFunction.GetEasingFunction(easingFunc))
-                    .OnComplete(() => Debug.Log("ScaleZ finished"))
-                    .MoveTo(testTransform.position + Vector3.up * 5f, duration * 2f)
-                    .AddEasing(EasingFunction.GetEasingFunction(easingFunc))
-                    .OnComplete(() => Debug.Log("MoveTo Finished"))
-                    .OnCanceled(() =>
-                    {
-                        var scale = prefab.transform.localScale;
-                        int horizontal = 5;
-                        var pos = transform.position;
-                        for (int i = 0; i < testCount; i++)
-                        {
-                            goTestList[i].transform.position = pos;
-                            goTestList[i].transform.localScale = Vector3.one;
-                            pos.x += scale.x;
-                
-                            horizontal--;
-                            if (horizontal == 0)
-                            {
-                                pos.y += scale.y;
-                                pos.x = transform.position.x;
-                                horizontal = 5;
-                            }
-                        }
-                    })
-                    .Start();
-                // testTransform.ScaleTweenX(startScale.x, targetScale.x, duration);
+                // Test1(testTransform, easing);
+                // Test2(testTransform, easing);
+                Test3(testTransform, easing);
+            }
+        }
+
+        void Test1(Transform testTransform, EasingFunction.Function easing)
+        {
+            testTransform.XIVTween()
+                .ScaleZ(startScale.z, targetScale.z, duration, easing)
+                .OnComplete(() => Debug.Log("ScaleZ finished"))
+                .Start();
+            testTransform.XIVTween()
+                .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration * 2f, easing)
+                .OnComplete(() => Debug.Log("MoveTo Finished"))
+                .OnCanceled(Cancel)
+                .Start();
+        }
+
+        void Test2(Transform testTransform, EasingFunction.Function easing)
+        {
+            testTransform.XIVTween()
+                .ScaleZ(startScale.z, targetScale.z, duration, easing)
+                .And()
+                .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration * 2f, easing)
+                .OnComplete(() => Debug.Log("Both ScaleZ and Move tweens are completed"))
+                .OnCanceled(Cancel)
+                .Start();
+        }
+
+        void Test3(Transform testTransform, EasingFunction.Function easing)
+        {
+            testTransform.XIVTween()
+                .ScaleZ(startScale.z, targetScale.z, duration, easing)
+                .And()
+                // .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration * 2f, easing)
+                .AddTween(new MoveTowardsTween(testTransform, testTransform.position + Vector3.up * 5f, 1f))
+                .And()
+                .AddTween(new ChangeColorTween().Set(testTransform.GetComponent<Renderer>(), Color.white, Color.red, duration, easing))
+                .OnComplete(() => Debug.Log("Both ScaleZ and Move tweens are completed"))
+                .OnCanceled(Cancel)
+                .Start();
+        }
+
+        void Cancel()
+        {
+            var scale = prefab.transform.localScale;
+            int horizontal = 5;
+            var pos = transform.position;
+            for (int i = 0; i < testCount; i++)
+            {
+                goTestList[i].transform.position = pos;
+                goTestList[i].transform.localScale = Vector3.one;
+                pos.x += scale.x;
+
+                horizontal--;
+                if (horizontal == 0)
+                {
+                    pos.y += scale.y;
+                    pos.x = transform.position.x;
+                    horizontal = 5;
+                }
             }
         }
 
@@ -100,5 +134,52 @@ namespace XIV.TweenSystem
                 go.transform.CancelTween();
             }
         }
+    }
+
+    // How to create custom tweens using ITween
+    public class MoveTowardsTween : ITween
+    {
+        Transform transform;
+        Vector3 target;
+        float speed;
+        
+        public MoveTowardsTween(Transform transform, Vector3 target, float speed)
+        {
+            this.transform = transform;
+            this.target = target;
+            this.speed = speed;
+        }
+        
+        void ITween.Update(float deltaTime)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * deltaTime);
+        }
+
+        bool ITween.IsDone()
+        {
+            return Vector3.Distance(transform.position, target) < Mathf.Epsilon;
+        }
+
+        void ITween.Complete()
+        {
+            transform = default;
+        }
+
+        void ITween.Cancel()
+        {
+            transform = default;
+        }
+    }
+
+    // How to create custom tweens using TweenDriver<T, T1>
+    public class ChangeColorTween : TweenDriver<Color, Renderer>
+    {
+        protected override void OnUpdate(float normalizedTime)
+        {
+            var color = Color.Lerp(startValue, endValue, normalizedTime);
+            component.material.color = color;
+        }
+
+        protected override Color GetCurrent() => component.material.color;
     }
 }
