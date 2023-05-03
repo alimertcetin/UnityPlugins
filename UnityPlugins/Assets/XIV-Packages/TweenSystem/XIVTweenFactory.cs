@@ -108,6 +108,12 @@ namespace XIV.TweenSystem
             var t = GetPooledTween<ScaleTweenZ>().Set(component.transform, from, to, duration, easingFunc);
             return AddTween(t);
         }
+
+        public XIVTweenFactory ScalePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        {
+            var t = GetPooledTween<ScaleTweenPingPong>().Set(component.transform, from, to, duration, easingFunc);
+            return AddTween(t);
+        }
         
         public XIVTweenFactory Move(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
         {
@@ -130,6 +136,12 @@ namespace XIV.TweenSystem
         public XIVTweenFactory MoveZ(float from, float to, float duration, EasingFunction.Function easingFunc)
         {
             var t = GetPooledTween<MoveTweenZ>().Set(component.transform, from, to, duration, easingFunc);
+            return AddTween(t);
+        }
+
+        public XIVTweenFactory MovePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        {
+            var t = GetPooledTween<MoveTweenPingPong>().Set(component.transform, from, to, duration, easingFunc);
             return AddTween(t);
         }
     }
