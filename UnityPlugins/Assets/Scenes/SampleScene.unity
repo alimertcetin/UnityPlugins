@@ -618,7 +618,7 @@ MonoBehaviour:
   targetScale: {x: 0, y: 0, z: 0}
   duration: 5
   easingFunc: 23
-  testCount: 150
+  testCount: 1
 --- !u!4 &2036932121
 Transform:
   m_ObjectHideFlags: 0

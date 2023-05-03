@@ -5,14 +5,9 @@ namespace XIV.TweenSystem
 {
     internal sealed class MoveTweenX : TweenDriver<float, Transform>
     {
-        protected override void OnUpdate(float normalizedTime)
+        protected override void OnUpdate(float normalizedEasedTime)
         {
-            component.position = component.position.SetX(Mathf.Lerp(startValue, endValue, normalizedTime));
-        }
-
-        protected override float GetCurrent()
-        {
-            return component.position.x;
+            component.position = component.position.SetX(Mathf.Lerp(startValue, endValue, normalizedEasedTime));
         }
     }
 }

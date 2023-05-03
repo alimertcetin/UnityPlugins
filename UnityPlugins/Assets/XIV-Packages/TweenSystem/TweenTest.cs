@@ -100,6 +100,7 @@ namespace XIV.TweenSystem
                 .AddTween(new MoveTowardsTween(testTransform, testTransform.position + Vector3.up * 5f, 1f))
                 .And()
                 .AddTween(new ChangeColorTween().Set(testTransform.GetComponent<Renderer>(), Color.white, Color.red, duration, easing))
+                .ScaleZ(targetScale.z, startScale.z, duration, easing)
                 .OnComplete(() => Debug.Log("Both ScaleZ and Move tweens are completed"))
                 .OnCanceled(Cancel)
                 .Start();
@@ -174,12 +175,10 @@ namespace XIV.TweenSystem
     // How to create custom tweens using TweenDriver<T, T1>
     public class ChangeColorTween : TweenDriver<Color, Renderer>
     {
-        protected override void OnUpdate(float normalizedTime)
+        protected override void OnUpdate(float normalizedEasedTime)
         {
-            var color = Color.Lerp(startValue, endValue, normalizedTime);
+            var color = Color.Lerp(startValue, endValue, normalizedEasedTime);
             component.material.color = color;
         }
-
-        protected override Color GetCurrent() => component.material.color;
     }
 }

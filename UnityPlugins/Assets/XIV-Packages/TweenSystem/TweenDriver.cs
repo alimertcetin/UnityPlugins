@@ -9,7 +9,7 @@ namespace XIV.TweenSystem
     {
         internal TComponentType component { get; private set; }
 
-        internal TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
+        public TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
         {
             base.Set(startValue, endValue, duration, easingFunction);
             this.component = component;
@@ -31,13 +31,12 @@ namespace XIV.TweenSystem
     {
         protected TValueType startValue;
         protected TValueType endValue;
-        protected TValueType currentValue;
         protected EasingFunction.Function easingFunction;
         protected Timer timer;
         IPool pool;
         bool hasPool;
 
-        internal TweenDriver<TValueType> Set(TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
+        public TweenDriver<TValueType> Set(TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
         {
             Clear();
             this.startValue = startValue;
@@ -47,16 +46,14 @@ namespace XIV.TweenSystem
             return this;
         }
 
-        protected abstract void OnUpdate(float normalizedTime);
+        protected abstract void OnUpdate(float easedTime);
         protected abstract void OnComplete();
         protected abstract void OnCancel();
-        protected abstract TValueType GetCurrent();
         
         void Clear()
         {
             startValue = default;
             endValue = default;
-            currentValue = default;
             timer = default;
         }
 
@@ -65,7 +62,6 @@ namespace XIV.TweenSystem
             timer.Update(deltaTime);
             var easedTime = easingFunction.Invoke(0f, 1f, timer.NormalizedTime);
             OnUpdate(easedTime);
-            currentValue = GetCurrent();
         }
 
         bool ITween.IsDone() => timer.IsDone;
