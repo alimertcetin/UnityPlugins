@@ -64,14 +64,7 @@ namespace XIV.TweenSystem
                 // Test1(testTransform, easing);
                 // Test2(testTransform, easing);
                 // Test3(testTransform, easing);
-                var position = testTransform.position;
-                // position += new Vector3(-5f, -5f, 0f);
-                // testTransform.position = position;
-                testTransform.XIVTween()
-                    .MovePingPong(position, position + new Vector3(5f, 5f, 0f), duration, easing)
-                    .And()
-                    .ScalePingPong(Vector3.one, Vector3.one * 0.2f, duration, easing)
-                    .Start();
+                Test4(testTransform, easing);
             }
         }
 
@@ -106,6 +99,21 @@ namespace XIV.TweenSystem
                 .And()
                 // .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration * 2f, easing)
                 .AddTween(new MoveTowardsTween(testTransform, testTransform.position + Vector3.up * 5f, 1f))
+                .And()
+                .AddTween(new ChangeColorTween().Set(testTransform.GetComponent<Renderer>(), Color.white, Color.red, duration, easing))
+                .OnComplete(() => Debug.Log("Both ScaleZ and Move tweens are completed"))
+                .OnCanceled(Cancel)
+                .Start();
+            
+            
+        }
+
+        void Test4(Transform testTransform, EasingFunction.Function easing)
+        {
+            testTransform.XIVTween()
+                .ScaleZ(startScale.z, targetScale.z, duration / 4f, easing, true, 4)
+                .And()
+                .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration, easing, true, loopCount: 2)
                 .And()
                 .AddTween(new ChangeColorTween().Set(testTransform.GetComponent<Renderer>(), Color.white, Color.red, duration, easing))
                 .OnComplete(() => Debug.Log("Both ScaleZ and Move tweens are completed"))

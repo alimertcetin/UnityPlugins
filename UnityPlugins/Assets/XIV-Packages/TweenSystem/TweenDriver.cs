@@ -9,9 +9,9 @@ namespace XIV.TweenSystem
     {
         internal TComponentType component { get; private set; }
 
-        public TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
+        public TweenDriver<TValueType, TComponentType> Set(TComponentType component, TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction, bool isPingPong = false, int loopCount = 0)
         {
-            base.Set(startValue, endValue, duration, easingFunction);
+            base.Set(startValue, endValue, duration, easingFunction, isPingPong, loopCount);
             this.component = component;
             return this;
         }
@@ -35,14 +35,19 @@ namespace XIV.TweenSystem
         protected Timer timer;
         IPool pool;
         bool hasPool;
+        bool isPingPong;
+        bool reversed;
+        int loopCount;
 
-        public TweenDriver<TValueType> Set(TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction)
+        public TweenDriver<TValueType> Set(TValueType startValue, TValueType endValue, float duration, EasingFunction.Function easingFunction, bool isPingPong = false, int loopCount = 0)
         {
             Clear();
             this.startValue = startValue;
             this.endValue = endValue;
             this.easingFunction = easingFunction;
-            timer = new Timer(duration);
+            this.timer = new Timer(duration);
+            this.isPingPong = isPingPong;
+            this.loopCount = loopCount;
             return this;
         }
 
@@ -55,16 +60,38 @@ namespace XIV.TweenSystem
             startValue = default;
             endValue = default;
             timer = default;
+            reversed = false;
         }
 
         void ITween.Update(float deltaTime)
         {
             timer.Update(deltaTime);
-            var easedTime = easingFunction.Invoke(0f, 1f, timer.NormalizedTime);
+            if (timer.NormalizedTime > 0.5f && reversed == false && isPingPong)
+            {
+                Reverse();
+            }
+
+            var easedTime = easingFunction.Invoke(0f, 1f, isPingPong ? timer.NormalizedTimePingPong : timer.NormalizedTime);
             OnUpdate(easedTime);
+            if (timer.IsDone == false) return;
+            loopCount--;
+            if (loopCount > 0)
+            {
+                timer.Restart();
+            }
+            if (isPingPong)
+            {
+                Reverse();
+            }
         }
 
-        bool ITween.IsDone() => timer.IsDone;
+        void Reverse()
+        {
+            (startValue, endValue) = (endValue, startValue);
+            reversed = !reversed;
+        }
+
+        bool ITween.IsDone() => timer.IsDone && loopCount <= 0;
 
         void ITween.Complete()
         {

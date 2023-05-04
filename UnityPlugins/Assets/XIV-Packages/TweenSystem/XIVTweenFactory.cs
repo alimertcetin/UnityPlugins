@@ -23,11 +23,11 @@ namespace XIV.TweenSystem
 
         public static XIVTweenFactory GetTween(Component component)
         {
-            instance.Setup(component);
+            instance.Initialize(component);
             return instance;
         }
 
-        void Setup(Component component)
+        void Initialize(Component component)
         {
             this.component = component;
             this.componentInstanceID = component.gameObject.GetInstanceID();
@@ -35,7 +35,7 @@ namespace XIV.TweenSystem
             useCurrent = true;
         }
 
-        void Clear()
+        void Reset()
         {
             component = default;
             currentTimeline = default;
@@ -56,6 +56,18 @@ namespace XIV.TweenSystem
             return this;
         }
 
+        XIVTweenFactory AddTween<T>(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0) where T : TweenDriver<Vector3, Transform>
+        {
+            var t = GetPooledTween<T>().Set(component.transform, from, to, duration, easingFunc, isPingPong, loopCount);
+            return AddTween(t);
+        }
+
+        XIVTweenFactory AddTween<T>(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0) where T : TweenDriver<float, Transform>
+        {
+            var t = GetPooledTween<T>().Set(component.transform, from, to, duration, easingFunc, isPingPong, loopCount);
+            return AddTween(t);
+        }
+
         public void Start()
         {
             timelineBuffer.Add(currentTimeline);
@@ -64,7 +76,7 @@ namespace XIV.TweenSystem
             {
                 XIVTweenSystem.AddTween(componentInstanceID, timelineBuffer[i]);
             }
-            Clear();
+            Reset();
         }
 
         public XIVTweenFactory And()
@@ -85,64 +97,54 @@ namespace XIV.TweenSystem
             return AddTween(t);
         }
 
-        public XIVTweenFactory Scale(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory Scale(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<ScaleTween>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<ScaleTween>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
 
-        public XIVTweenFactory ScaleX(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory ScaleX(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<ScaleTweenX>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<ScaleTweenX>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory ScaleY(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory ScaleY(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<ScaleTweenY>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<ScaleTweenY>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory ScaleZ(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory ScaleZ(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<ScaleTweenZ>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<ScaleTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
 
-        public XIVTweenFactory ScalePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory ScalePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<ScaleTweenPingPong>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<ScaleTweenPingPong>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory Move(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory Move(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<MoveTween>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<MoveTween>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory MoveX(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory MoveX(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<MoveTweenX>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<MoveTweenX>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory MoveY(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory MoveY(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<MoveTweenY>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<MoveTweenY>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
         
-        public XIVTweenFactory MoveZ(float from, float to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory MoveZ(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<MoveTweenZ>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<MoveTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
 
-        public XIVTweenFactory MovePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc)
+        public XIVTweenFactory MovePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
-            var t = GetPooledTween<MoveTweenPingPong>().Set(component.transform, from, to, duration, easingFunc);
-            return AddTween(t);
+            return AddTween<MoveTweenPingPong>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
     }
 }
