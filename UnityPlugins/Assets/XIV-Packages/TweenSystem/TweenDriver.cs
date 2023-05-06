@@ -74,11 +74,12 @@ namespace XIV.TweenSystem
             var easedTime = easingFunction.Invoke(0f, 1f, isPingPong ? timer.NormalizedTimePingPong : timer.NormalizedTime);
             OnUpdate(easedTime);
             if (timer.IsDone == false) return;
-            loopCount--;
+            
             if (loopCount > 0)
             {
                 timer.Restart();
             }
+            loopCount--;
             if (isPingPong)
             {
                 Reverse();
