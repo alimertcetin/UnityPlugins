@@ -63,7 +63,7 @@ namespace XIV.TweenSystem
                 // testTransform.position -= Vector3.up * 5f;
                 // Test1(testTransform, easing);
                 // Test2(testTransform, easing);
-                // Test3(testTransform, easing);
+                Test3(testTransform, easing);
                 Test4(testTransform, easing);
             }
         }
@@ -95,7 +95,7 @@ namespace XIV.TweenSystem
         void Test3(Transform testTransform, EasingFunction.Function easing)
         {
             testTransform.XIVTween()
-                .ScalePingPong(startScale, targetScale, duration, easing)
+                .Scale(startScale, targetScale, duration, easing, true)
                 .And()
                 // .Move(testTransform.position, testTransform.position + Vector3.up * 5f, duration * 2f, easing)
                 .AddTween(new MoveTowardsTween(testTransform, testTransform.position + Vector3.up * 5f, 1f))

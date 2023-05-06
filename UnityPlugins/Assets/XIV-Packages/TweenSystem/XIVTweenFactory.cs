@@ -116,11 +116,6 @@ namespace XIV.TweenSystem
         {
             return AddTween<ScaleTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
-
-        public XIVTweenFactory ScalePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
-        {
-            return AddTween<ScaleTweenPingPong>(from, to, duration, easingFunc, isPingPong, loopCount);
-        }
         
         public XIVTweenFactory Move(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
@@ -140,11 +135,6 @@ namespace XIV.TweenSystem
         public XIVTweenFactory MoveZ(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
             return AddTween<MoveTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
-        }
-
-        public XIVTweenFactory MovePingPong(Vector3 from, Vector3 to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
-        {
-            return AddTween<MoveTweenPingPong>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
     }
 }
