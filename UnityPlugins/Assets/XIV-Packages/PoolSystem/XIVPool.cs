@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XIV_Packages.PoolSystem
+namespace XIV.PoolSystem
 {
     public class XIVPool<T> : IPool<T> where T : IPoolable
     {

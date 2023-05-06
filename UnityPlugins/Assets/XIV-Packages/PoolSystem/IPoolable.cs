@@ -1,4 +1,4 @@
-﻿namespace XIV_Packages.PoolSystem
+﻿namespace XIV.PoolSystem
 {
     public interface IPoolable
     {

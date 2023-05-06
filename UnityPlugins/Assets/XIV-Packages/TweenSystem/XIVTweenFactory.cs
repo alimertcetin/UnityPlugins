@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XIV.Core.Utils;
-using XIV_Packages.PoolSystem;
+using XIV.PoolSystem;
 
 namespace XIV.TweenSystem
 {

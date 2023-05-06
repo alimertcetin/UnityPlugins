@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XIV_Packages.PoolSystem
+namespace XIV.PoolSystem
 {
     public interface IPool
     {

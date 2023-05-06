@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace XIV_Packages.PoolSystem
+namespace XIV.PoolSystem
 {
     public static class XIVPoolSystem
     {
