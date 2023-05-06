@@ -59,12 +59,17 @@ namespace XIV.TweenSystem
                 {
                     testTransform.CancelTween();
                 }
+                
+                testTransform.XIVTween()
+                    .RotateX(0, -90f, duration, easing, true, 1)
+                    .RotateZ(0, -90f, duration, easing, true)
+                    .Start();
 
                 // testTransform.position -= Vector3.up * 5f;
                 // Test1(testTransform, easing);
                 // Test2(testTransform, easing);
-                Test3(testTransform, easing);
-                Test4(testTransform, easing);
+                // Test3(testTransform, easing);
+                // Test4(testTransform, easing);
             }
         }
 

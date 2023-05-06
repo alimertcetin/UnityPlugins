@@ -68,6 +68,12 @@ namespace XIV.TweenSystem
             return AddTween(t);
         }
 
+        XIVTweenFactory AddTween<T>(Quaternion from, Quaternion to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0) where T : TweenDriver<Quaternion, Transform>
+        {
+            var t = GetPooledTween<T>().Set(component.transform, from, to, duration, easingFunc, isPingPong, loopCount);
+            return AddTween(t);
+        }
+
         public void Start()
         {
             timelineBuffer.Add(currentTimeline);
@@ -135,6 +141,26 @@ namespace XIV.TweenSystem
         public XIVTweenFactory MoveZ(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
         {
             return AddTween<MoveTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
+        }
+        
+        public XIVTweenFactory Rotate(Quaternion from, Quaternion to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
+        {
+            return AddTween<RotationTween>(from, to, duration, easingFunc, isPingPong, loopCount);
+        }
+        
+        public XIVTweenFactory RotateX(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
+        {
+            return AddTween<RotationTweenX>(from, to, duration, easingFunc, isPingPong, loopCount);
+        }
+        
+        public XIVTweenFactory RotateY(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
+        {
+            return AddTween<RotationTweenY>(from, to, duration, easingFunc, isPingPong, loopCount);
+        }
+        
+        public XIVTweenFactory RotateZ(float from, float to, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
+        {
+            return AddTween<RotationTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
     }
 }
