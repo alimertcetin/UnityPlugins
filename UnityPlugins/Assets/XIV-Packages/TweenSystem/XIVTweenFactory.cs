@@ -162,5 +162,11 @@ namespace XIV.TweenSystem
         {
             return AddTween<RotationTweenZ>(from, to, duration, easingFunc, isPingPong, loopCount);
         }
+        
+        public XIVTweenFactory FollowCurve(Vector3[] points, float duration, EasingFunction.Function easingFunc, bool isPingPong = false, int loopCount = 0)
+        {
+            var t = GetPooledTween<FollowCurveTween>().Set(component.transform, points, duration, easingFunc, isPingPong, loopCount);
+            return AddTween(t);
+        }
     }
 }

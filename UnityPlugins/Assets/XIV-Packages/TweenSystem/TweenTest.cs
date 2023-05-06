@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using XIV.Core;
 using XIV.Core.Utils;
+using XIV.Core.XIVMath;
 
 namespace XIV.TweenSystem
 {
@@ -51,6 +53,7 @@ namespace XIV.TweenSystem
             }
 
             var easing = EasingFunction.GetEasingFunction(easingFunc);
+            
             for (int i = 0; i < goTestList.Count; i++)
             {
                 GameObject go = goTestList[i];
@@ -59,13 +62,19 @@ namespace XIV.TweenSystem
                 {
                     testTransform.CancelTween();
                 }
-                
-                testTransform.XIVTween()
-                    .RotateX(0, -90f, duration, easing, true, 1)
-                    .RotateZ(0, -90f, duration, easing, true)
-                    .Start();
 
                 // testTransform.position -= Vector3.up * 5f;
+                
+                Vector3[] points = BezierMath.CreateCurve(testTransform.position, testTransform.position + Vector3.up * 5f);
+                testTransform.XIVTween()
+                    .FollowCurve(points, duration, easing, true)
+                    .And()
+                    .Scale(testTransform.localScale, Vector3.one * 0.25f, duration * 0.5f, easing, true, loopCount:1)
+                    .Start();
+                
+                XIVDebug.DrawSpline(points, Color.red, 10, duration);
+                // XIVDebug.DrawBezier(points[0], points[1], points[2], points[3], Color.red, duration);
+
                 // Test1(testTransform, easing);
                 // Test2(testTransform, easing);
                 // Test3(testTransform, easing);
