@@ -43,6 +43,9 @@ namespace XIV.TweenSystem
         class TweenHelperMono : MonoBehaviour
         {
             internal List<TweenData> tweenDatas = new List<TweenData>();
+        
+            static TweenHelperMono instance;
+            public static TweenHelperMono Instance => instance == null ? instance = new GameObject("XIV-TweenSystem-Helper").AddComponent<TweenHelperMono>() : instance;
 
             void Update()
             {
@@ -67,17 +70,6 @@ namespace XIV.TweenSystem
                 }
             }
         }
-        
-        static TweenHelperMono helper;
-
-        static TweenHelperMono Helper
-        {
-            get
-            {
-                if (helper == null) helper = new GameObject("XIV-TweenSystem-Helper").AddComponent<TweenHelperMono>();
-                return helper;
-            }
-        }
 
         static HashSet<int> tweenLookup = new HashSet<int>();
 
@@ -99,7 +91,7 @@ namespace XIV.TweenSystem
             tweenLookup.Remove(instanceID);
 
             int index = IndexOfTweenData(instanceID);
-            var tweenDatas = Helper.tweenDatas;
+            var tweenDatas = TweenHelperMono.Instance.tweenDatas;
             var tweenData = tweenDatas[index];
             tweenDatas.RemoveAt(index);
             tweenData.Return();
@@ -120,19 +112,19 @@ namespace XIV.TweenSystem
         {
             if (tweenLookup.Contains(instanceID))
             {
-                return Helper.tweenDatas[IndexOfTweenData(instanceID)];
+                return TweenHelperMono.Instance.tweenDatas[IndexOfTweenData(instanceID)];
             }
 
             var tweenData = XIVPoolSystem.HasPool<TweenData>() ? XIVPoolSystem.GetItem<TweenData>() : XIVPoolSystem.AddPool(new XIVPool<TweenData>(() => new TweenData())).GetItem();
             tweenData.instanceID = instanceID;
             tweenLookup.Add(instanceID);
-            Helper.tweenDatas.Add(tweenData);
+            TweenHelperMono.Instance.tweenDatas.Add(tweenData);
             return tweenData;
         }
 
         static int IndexOfTweenData(int instanceID)
         {
-            var tweenDatas = Helper.tweenDatas;
+            var tweenDatas = TweenHelperMono.Instance.tweenDatas;
             int count = tweenDatas.Count;
             for (int i = 0; i < count; i++)
             {
