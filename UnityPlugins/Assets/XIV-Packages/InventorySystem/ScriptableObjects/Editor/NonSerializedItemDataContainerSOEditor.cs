@@ -16,7 +16,7 @@ namespace XIV.InventorySystem.XIVEditor
 
             if (GUILayout.Button("Load Data Containers"))
             {
-                Dictionary<Type, List<NonSerializedItemDataSO>> dataContainers = AssetUtils.LoadAssetsOfType<NonSerializedItemDataSO>("Assets/ScriptableObjects");
+                Dictionary<Type, List<NonSerializedItemDataSO>> dataContainers = AssetUtils.LoadAssetsByBaseClass<NonSerializedItemDataSO>("Assets/ScriptableObjects");
                 List<NonSerializedItemDataSO> itemDatas = new List<NonSerializedItemDataSO>(dataContainers.Count);
                 foreach (KeyValuePair<Type, List<NonSerializedItemDataSO>> dataContainer in dataContainers)
                 {

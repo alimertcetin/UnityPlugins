@@ -38,7 +38,7 @@ namespace XIV.UpgradeSystem.Editor
                 Undo.RegisterCompleteObjectUndo(upgradeDBSO, "Load Upgrades");
                 var allUpgrades = (UpgradeDictionary)ReflectionUtils.GetFieldValue("allUpgrades", upgradeDBSO);
                 allUpgrades.Clear();
-                Dictionary<Type, List<UpgradeSO<PlayerUpgrade>>> upgrades = AssetUtils.LoadAssetsOfType<UpgradeSO<PlayerUpgrade>>(UpgradeFolderPath);
+                Dictionary<Type, List<UpgradeSO<PlayerUpgrade>>> upgrades = AssetUtils.LoadAssetsByBaseClass<UpgradeSO<PlayerUpgrade>>(UpgradeFolderPath);
                 foreach (Type key in upgrades.Keys)
                 {
                     allUpgrades.Add(key.Name, new CustomSerializedList<UpgradeSO<PlayerUpgrade>>(upgrades[key]));
