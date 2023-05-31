@@ -70,6 +70,8 @@ namespace XIV.TweenSystem
                     .FollowCurve(points, duration, easing, true)
                     .And()
                     .Scale(testTransform.localScale, Vector3.one * 0.25f, duration * 0.5f, easing, true, loopCount:1)
+                    .And()
+                    .RendererColorCurve(new Color[] { Color.white, Color.cyan, Color.magenta, Color.blue }, duration * 1.5f, easing, true)
                     .Start();
                 
                 XIVDebug.DrawSpline(points, Color.red, 10, duration);
