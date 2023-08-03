@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using XIV.UpgradeSystem.DataStructures;
 using XIV.UpgradeSystem.Examples;
-using XIV.UpgradeSystem.Utils;
 
 namespace XIV.UpgradeSystem.Integration
 {

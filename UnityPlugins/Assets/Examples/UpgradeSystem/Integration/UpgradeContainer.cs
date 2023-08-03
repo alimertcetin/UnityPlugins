@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using XIV.UpgradeSystem.Examples;
 
 namespace XIV.UpgradeSystem.Integration
 {

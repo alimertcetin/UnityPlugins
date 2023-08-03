@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XIV.Core;
+using XIV.Core.TweenSystem;
+using XIV.Core.TweenSystem.Drivers;
 using XIV.Core.Utils;
 using XIV.Core.XIVMath;
 
