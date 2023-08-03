@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace XIV.InventorySystem.ScriptableObjects.ChannelSOs
+namespace XIV_Packages.InventorySystem.ScriptableObjects.Channels
 {
-    [CreateAssetMenu(menuName = "ChannelSOs/InventoryChannelSO")]
+    [CreateAssetMenu(menuName = MenuPaths.CHANNELS_MENU + nameof(InventoryChannelSO))]
     public class InventoryChannelSO : ScriptableObject
     {
         Action<Inventory> action;

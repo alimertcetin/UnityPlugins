@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XIV.InventorySystem.ScriptableObjects
+namespace XIV_Packages.InventorySystem.ScriptableObjects
 {
     public abstract class ItemSO : ScriptableObject
     {
@@ -9,23 +9,19 @@ namespace XIV.InventorySystem.ScriptableObjects
         void GenerateID()
         {
             UnityEditor.Undo.RegisterCompleteObjectUndo(this, "Generate ID");
-            GetBaseItem().GenerateID();
+            GetItem().GenerateID();
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
 
-        public abstract ItemBase GetBaseItem();
+        public abstract ItemBase GetItem();
     }
     
     public class ItemSO<T> : ItemSO where T : ItemBase
     {
         [SerializeField] T item;
      
-        public override ItemBase GetBaseItem()
-        {
-            return GetItem();
-        }
-
-        public T GetItem()
+        public override ItemBase GetItem()
         {
             return item;
         }

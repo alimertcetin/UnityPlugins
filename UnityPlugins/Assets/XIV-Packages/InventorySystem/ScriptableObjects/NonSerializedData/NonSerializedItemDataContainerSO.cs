@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace XIV.InventorySystem.ScriptableObjects.NonSerializedData
+namespace XIV_Packages.InventorySystem.ScriptableObjects.NonSerializedData
 {
     [CreateAssetMenu(menuName = "Inventory/NonSerializedDataContainerSO")]
     public class NonSerializedItemDataContainerSO : ScriptableObject
@@ -11,7 +11,7 @@ namespace XIV.InventorySystem.ScriptableObjects.NonSerializedData
         {
             for (int i = 0; i < itemDataPairs.Length; i++)
             {
-                if (itemDataPairs[i].itemSO.GetBaseItem().Id == itemBase.Id)
+                if (itemDataPairs[i].itemSO.GetItem().id == itemBase.id)
                 {
                     return itemDataPairs[i].uiSprite;
                 }

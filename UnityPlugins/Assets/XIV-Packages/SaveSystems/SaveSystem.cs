@@ -1,117 +1,128 @@
 ﻿using System.Collections;
-using UnityEngine;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
+using System.IO;
+using System.Threading.Tasks;
+using UnityEngine;
 
-namespace XIV.SaveSystems
+namespace XIV_Packages.SaveSystems
 {
     public static class SaveSystem
     {
-        static string CurrentScene => SceneManager.GetActiveScene().name;
-        static string saveDirectory => Path.Combine(Application.persistentDataPath, CurrentScene);
-        static string saveFile => CurrentScene + ".sav";
-        static string SavePath => Path.Combine(saveDirectory, saveFile);
-
-        public static void Save()
+        // static readonly string productName = Application.productName;
+        // TODO : we can add slot support by changing the "data" folder name
+        public static readonly string saveFolder = Path.Combine(Application.persistentDataPath, "data");
+        static readonly Dictionary<string, List<SavableEntity>> savableEntityLookup = new Dictionary<string, List<SavableEntity>>();
+        
+        public static void Save(string sceneName)
         {
-            var state = LoadFile();
-            CaptureState(state);
-            SaveFile(state);
-        }
-
-        public static void Load()
-        {
-            var state = LoadFile();
-            RestoreState(state);
-        }
-
-        public static IEnumerator SaveAsync()
-        {
-            var state = LoadFile();
-            yield return CaptureStateAsync(state);
-            SaveFile(state);
-        }
-
-        public static IEnumerator LoadAsync()
-        {
-            var state = LoadFile();
-            yield return RestoreStateAsync(state);
-        }
-
-        static void SaveFile(object state)
-        {
-            if (Directory.Exists(saveDirectory) == false) Directory.CreateDirectory(saveDirectory);
-            using (var stream = File.Open(SavePath, FileMode.Create, FileAccess.Write))
+            Directory.CreateDirectory(saveFolder);
+            if (TryGetSavableEntitiesInScene(sceneName, out var savableEntities))
             {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(stream, state);
+                Saver.Save(GetSaveFilePath(sceneName), GetSaveFileBackupPath(sceneName), savableEntities);
             }
         }
 
-        static Dictionary<string, object> LoadFile()
+        public static void Load(string sceneName)
         {
-            if (File.Exists(SavePath) == false) return new Dictionary<string, object>();
-
-            using (FileStream stream = File.Open(SavePath, FileMode.Open, FileAccess.Read))
+            Directory.CreateDirectory(saveFolder);
+            if (TryGetSavableEntitiesInScene(sceneName, out var savableEntities))
             {
-                var formatter = new BinaryFormatter();
-                return (Dictionary<string, object>)formatter.Deserialize(stream);
+                Saver.Load(GetSaveFilePath(sceneName), GetSaveFileBackupPath(sceneName), savableEntities);
             }
         }
 
-        static void CaptureState(Dictionary<string, object> state)
+        public static IEnumerator SaveAsync(string sceneName)
         {
-            var saveables = Object.FindObjectsOfType<SaveableEntity>();
-            foreach (var saveable in saveables)
+            Directory.CreateDirectory(saveFolder);
+            if (TryGetSavableEntitiesInScene(sceneName, out var savableEntities))
             {
-                var saveableEntityState = saveable.CaptureState();
-
-                if (state.ContainsKey(saveable.Id)) state[saveable.Id] = saveableEntityState;
-                else state.Add(saveable.Id, saveableEntityState);
+                yield return AsyncSaver.SaveAsync(GetSaveFilePath(sceneName), GetSaveFileBackupPath(sceneName), savableEntities);
             }
         }
 
-
-        static IEnumerator CaptureStateAsync(Dictionary<string, object> state)
+        public static IEnumerator LoadAsync(string sceneName)
         {
-            var saveables = Object.FindObjectsOfType<SaveableEntity>();
-            foreach (var saveable in saveables)
+            Directory.CreateDirectory(saveFolder);
+            if (TryGetSavableEntitiesInScene(sceneName, out var savableEntities))
             {
-                yield return null;
-                var saveableEntityState = saveable.CaptureState();
-
-                if (state.ContainsKey(saveable.Id)) state[saveable.Id] = saveableEntityState;
-                else state.Add(saveable.Id, saveableEntityState);
+                yield return AsyncSaver.LoadAsync(GetSaveFilePath(sceneName), GetSaveFileBackupPath(sceneName), savableEntities);
             }
         }
 
-        static void RestoreState(Dictionary<string, object> state)
+        public static bool IsSaveExists(string sceneName)
         {
-            var saveables = Object.FindObjectsOfType<SaveableEntity>();
-            foreach (var saveable in saveables)
+            return File.Exists(GetSaveFilePath(sceneName)) || File.Exists(GetSaveFileBackupPath(sceneName));
+        }
+
+        public static bool IsSaveExistsAny()
+        {
+            return Directory.Exists(saveFolder) && Directory.GetFiles(saveFolder).Length > 0;
+        }
+
+        public static void ClearSaveData(string sceneName)
+        {
+            DeleteIfExists(GetSaveFilePath(sceneName));
+            DeleteIfExists(GetSaveFileBackupPath(sceneName));
+
+            void DeleteIfExists(string file)
             {
-                if (state.TryGetValue(saveable.Id, out object value))
+                Task.Factory.StartNew(() =>
                 {
-                    saveable.RestoreState(value);
-                }
+                    if (File.Exists(file)) File.Delete(file);
+                });
             }
         }
 
-        static IEnumerator RestoreStateAsync(Dictionary<string, object> state)
+        public static void ClearSaveDataAll()
         {
-            var saveables = Object.FindObjectsOfType<SaveableEntity>();
-            foreach (var saveable in saveables)
+            if (Directory.Exists(saveFolder) == false) return;
+            
+            Task.Factory.StartNew(() =>
             {
-                yield return null;
-                if (state.TryGetValue(saveable.Id, out object value))
+                var files = Directory.GetFiles(saveFolder);
+                for (int i = 0; i < files.Length; i++)
                 {
-                    saveable.RestoreState(value);
+                    File.Delete(files[i]);
                 }
-            }
+            });
         }
 
-        public static bool IsSaveExists() => File.Exists(SavePath);
+        public static void AddSavableEntity(string sceneName, SavableEntity entity)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName)) return;
+            if (entity == null) return;
+            
+            if (savableEntityLookup.ContainsKey(sceneName) == false)
+            {
+                savableEntityLookup.Add(sceneName, new List<SavableEntity> { entity });
+                return;
+            }
+
+            var list = savableEntityLookup[sceneName];
+            if (list.Contains(entity)) return;
+            list.Add(entity);
+        }
+
+        public static void RemoveSavableEntity(string sceneName, SavableEntity entity)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName) || entity == null) return;
+
+            var list = savableEntityLookup[sceneName];
+            list.Remove(entity);
+
+            if (list.Count == 0) savableEntityLookup.Remove(sceneName);
+        }
+
+        static bool TryGetSavableEntitiesInScene(string sceneName, out SavableEntity[] savableEntities)
+        {
+            savableEntities = default;
+            if (savableEntityLookup.ContainsKey(sceneName) == false) return false;
+            savableEntities = savableEntityLookup[sceneName].ToArray();
+            return true;
+        }
+
+        static string GetSaveFilePath(string sceneName) => Path.Combine(saveFolder, sceneName) + ".sav";
+        static string GetSaveFileBackupPath(string sceneName) => Path.Combine(saveFolder, sceneName) + ".bak";
+        
     }
 }

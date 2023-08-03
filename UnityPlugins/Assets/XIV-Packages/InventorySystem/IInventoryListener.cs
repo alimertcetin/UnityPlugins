@@ -1,4 +1,4 @@
-﻿namespace XIV.InventorySystem
+﻿namespace XIV_Packages.InventorySystem
 {
     public interface IInventoryListener
     {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using XIV.InventorySystem.ScriptableObjects.ChannelSOs;
-using XIV.InventorySystem.ScriptableObjects.NonSerializedData;
+using XIV_Packages.InventorySystem;
+using XIV_Packages.InventorySystem.ScriptableObjects.Channels;
+using XIV_Packages.InventorySystem.ScriptableObjects.NonSerializedData;
 
 namespace XIV.InventorySystem.UI
 {

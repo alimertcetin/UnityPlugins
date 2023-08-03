@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XIV.InventorySystem
+namespace XIV_Packages.InventorySystem
 {
     // We will be able to add new fields with less effort than directly passing a collection to methods
     public readonly struct InventoryChange

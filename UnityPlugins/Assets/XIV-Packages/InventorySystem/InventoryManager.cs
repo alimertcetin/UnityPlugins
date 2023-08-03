@@ -1,20 +1,18 @@
 ﻿using UnityEngine;
-using XIV.InventorySystem.ScriptableObjects;
-using XIV.InventorySystem.ScriptableObjects.ChannelSOs;
-using XIV.SaveSystems;
-using XIV.ScriptableObjects.Channels;
+using XIV_Packages.InventorySystem.ScriptableObjects;
+using XIV_Packages.InventorySystem.ScriptableObjects.Channels;
+using XIV_Packages.SaveSystems;
+using XIV_Packages.ScriptableObjects.Channels;
 
-namespace XIV.InventorySystem
+namespace XIV_Packages.InventorySystem
 {
-    public class InventoryManager : MonoBehaviour, IInventoryListener, ISaveable
+    public class InventoryManager : MonoBehaviour, IInventoryListener, ISavable
     {
-        [SerializeField] InventoryItemChannelSO useItemRequestChannel;
+        [SerializeField] InventorySO inventorySO;
         [SerializeField] InventoryChannelSO inventoryLoadedChannel;
         [SerializeField] InventoryChangeChannelSO inventoryChangedChannel;
-        [SerializeField] VoidEventChannelSO onSceneReady;
+        [SerializeField] VoidChannelSO onSceneReady;
 
-        [SerializeField] InventorySO inventorySO;
-        
         Inventory inventory;
 
         void Awake() => inventory = inventorySO.GetInventory();
@@ -22,28 +20,19 @@ namespace XIV.InventorySystem
         
         void OnEnable()
         {
-            useItemRequestChannel.Register(UseItem);
-            onSceneReady.OnEventRaised += OnSceneReady;
+            onSceneReady?.Register(OnSceneReady);
             inventory.AddListener(this);
         }
 
         void OnDisable()
         {
-            useItemRequestChannel.Unregister(UseItem);
-            onSceneReady.OnEventRaised -= OnSceneReady;
+            onSceneReady?.Unregister(OnSceneReady);
             inventory.RemoveListener(this);
         }
 
         void OnSceneReady()
         {
             inventoryLoadedChannel.RaiseEvent(inventory);
-        }
-
-        void UseItem(IInventoryItem inventoryItem, int amount)
-        {
-            if (inventory.CanRemove(inventoryItem, amount) == false) return;
-
-            inventory.RemoveAt(inventoryItem.Index, ref amount);
         }
 
         void IInventoryListener.OnInventoryChanged(InventoryChange inventoryChange)
@@ -60,7 +49,7 @@ namespace XIV.InventorySystem
             public int[] amounts;
         }
         
-        object ISaveable.CaptureState()
+        object ISavable.GetSaveData()
         {
             int count = inventory.Count;
             ItemBase[] items = new ItemBase[count];
@@ -78,10 +67,10 @@ namespace XIV.InventorySystem
             };
         }
 
-        void ISaveable.RestoreState(object state)
+        void ISavable.LoadSaveData(object state)
         {
             SaveData saveData = (SaveData)state;
-            if (saveData.items == null) return;
+            if (saveData.items == null || saveData.items.Length == 0) return;
 
             for (int i = 0; i < inventory.SlotCount; i++)
             {

@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using XIV.InventorySystem.ScriptableObjects.ChannelSOs;
+using XIV_Packages.InventorySystem;
+using XIV_Packages.InventorySystem.ScriptableObjects.Channels;
 
 namespace XIV.InventorySystem.UI
 {

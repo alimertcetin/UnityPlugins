@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace XIV.InventorySystem.Utils
+namespace XIV_Packages.InventorySystem.Utils
 {
     public class UIItemDisplayer : MonoBehaviour
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using XIV.Core.Collections;
 
-namespace XIV.InventorySystem
+namespace XIV_Packages.InventorySystem
 {
     public delegate bool FindItemCondition<in T>(T item) where T : ItemBase;
     
@@ -162,12 +162,11 @@ namespace XIV.InventorySystem
         /// <summary>
         /// Tries to add as much as possible item at giving amount
         /// </summary>
-        /// <returns>True if amount reaches 0 after add operation</returns>
+        /// <returns>True if amount reaches 0 after add operation, otherwise returns false</returns>
         public bool TryAdd(ItemBase item, ref int amount, bool informListeners = true)
         {
-            for (var i = 0; i < SlotCount; i++)
+            for (var i = 0; i < SlotCount && amount > 0; i++)
             {
-                if (amount <= 0) break;
                 if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
                 
                 AddExisting(i, ref amount);
@@ -192,9 +191,8 @@ namespace XIV.InventorySystem
 
         void AddNew(ItemBase item, ref int amount)
         {
-            for (int i = 0; i < SlotCount; i++)
+            for (int i = 0; i < SlotCount && amount > 0; i++)
             {
-                if (amount <= 0) break;
                 if (emptySlots[i] == false) continue;
                 emptySlots[i] = false;
                 
@@ -211,9 +209,8 @@ namespace XIV.InventorySystem
         /// <returns>True if amount reaches 0 when remove operation is done</returns>
         public bool CanRemove(ItemBase item, int amount)
         {
-            for (var i = 0; i < SlotCount; i++)
+            for (var i = 0; i < SlotCount && amount > 0; i++)
             {
-                if (amount <= 0) break;
                 if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
                 
                 amount -= Math.Min(items[i].Amount, amount);
@@ -229,9 +226,8 @@ namespace XIV.InventorySystem
 
         public void Remove(ItemBase item, ref int amount)
         {
-            for (var i = 0; i < SlotCount; i++)
+            for (var i = 0; i < SlotCount && amount > 0; i++)
             {
-                if (amount <= 0) break;
                 if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
                 
                 Internal_RemoveAt(i, ref amount);

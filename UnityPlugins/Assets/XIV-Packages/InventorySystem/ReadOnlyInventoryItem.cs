@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XIV.InventorySystem
+namespace XIV_Packages.InventorySystem
 {
     [System.Serializable]
     public readonly struct ReadOnlyInventoryItem : IInventoryItem

@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using XIV_Packages.InventorySystem;
 
 namespace XIV.InventorySystem.UI
 {

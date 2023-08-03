@@ -1,7 +1,6 @@
 using UnityEngine;
-using XIV.InventorySystem.ScriptableObjects;
 
-namespace XIV.InventorySystem.ScriptableObjects.NonSerializedData
+namespace XIV_Packages.InventorySystem.ScriptableObjects.NonSerializedData
 {
     public abstract class NonSerializedItemDataSO : ScriptableObject
     {

@@ -1,13 +1,12 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using XIV.Core.Utils;
-using XIV.InventorySystem.ScriptableObjects.NonSerializedData;
+using XIV_Packages.InventorySystem.ScriptableObjects.NonSerializedData;
 
-namespace XIV.InventorySystem.XIVEditor
+namespace XIV_Packages.InventorySystem.ScriptableObjects.Editor
 {
     [CustomEditor(typeof(NonSerializedItemDataSO), true, isFallback = false), CanEditMultipleObjects]
-    public class NonSerializedItemDataSOEditor : Editor
+    public class NonSerializedItemDataSOEditor : UnityEditor.Editor
     {
         static bool isCached;
         static GUIContent cached;
