@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheGame.UISystems.Core
+namespace Assets.XIV
 {
     public static class UISystem
     {

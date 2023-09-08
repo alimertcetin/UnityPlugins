@@ -6,7 +6,7 @@ using XIV.Core;
 using XIV.Core.TweenSystem;
 using XIV.Core.Utils;
 
-namespace TheGame.UISystems.TabSystem
+namespace Assets.XIV
 {
     [RequireComponent(typeof(Image))]
     public class XIVTabButton : Selectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ISubmitHandler

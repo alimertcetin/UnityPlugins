@@ -2,7 +2,7 @@ using UnityEngine;
 using XIV.Core.Utils;
 using XIV.Core.TweenSystem;
 
-namespace TheGame.UISystems.Core
+namespace Assets.XIV
 {
     public abstract class ParentGameUI : GameUI
     {

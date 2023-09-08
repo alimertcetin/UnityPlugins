@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TheGame.UISystems.Components
+namespace Assets.XIV
 {
     public class XIVSettingDropdown : MonoBehaviour
     {

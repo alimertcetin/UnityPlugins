@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TheGame.UISystems.Components
+namespace Assets.XIV
 {
     [RequireComponent(typeof(Toggle))]
     public class SettingDropDownOptionDisabler : MonoBehaviour

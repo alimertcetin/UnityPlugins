@@ -1,4 +1,4 @@
-﻿namespace TheGame.UISystems.TabSystem
+﻿namespace Assets.XIV
 {
     public enum TabMovementDirection
     {

@@ -1,4 +1,4 @@
-﻿namespace TheGame.UISystems.Components
+﻿namespace Assets.XIV
 {
     public class XIVColoredStringDropdown : XIVColoredDropdown<string>
     {

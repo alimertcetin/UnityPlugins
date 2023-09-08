@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace TheGame.UISystems.Components
+namespace Assets.XIV
 {
     public class CustomButton : Button
     {

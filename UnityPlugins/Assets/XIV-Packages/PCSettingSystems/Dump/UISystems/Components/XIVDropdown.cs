@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheGame.UISystems.Components
+namespace Assets.XIV
 {
     [System.Serializable]
     public struct DropdownOptionData<T>

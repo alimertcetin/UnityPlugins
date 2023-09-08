@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace TheGame.UISystems.TabSystem
+namespace Assets.XIV
 {
     public static class TabHelper
     {

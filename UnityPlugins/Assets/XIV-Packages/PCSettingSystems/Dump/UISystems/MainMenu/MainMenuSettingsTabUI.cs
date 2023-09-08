@@ -1,10 +1,9 @@
-﻿using TheGame.UISystems.Core;
-using TheGame.UISystems.TabSystem;
+﻿using TheGame.UISystems.MainMenu;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace TheGame.UISystems.MainMenu
+namespace Assets.XIV
 {
     public class MainMenuSettingsTabUI : TabUI
     {

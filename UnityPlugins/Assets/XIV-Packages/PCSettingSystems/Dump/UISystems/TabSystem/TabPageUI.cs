@@ -1,10 +1,9 @@
 ﻿using System;
-using TheGame.UISystems.Core;
 using UnityEngine;
 using XIV.Core.TweenSystem;
 using XIV.Core.Utils;
 
-namespace TheGame.UISystems.TabSystem
+namespace Assets.XIV
 {
     public enum Direction
     {

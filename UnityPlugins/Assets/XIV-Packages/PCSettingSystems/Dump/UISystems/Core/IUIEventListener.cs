@@ -1,4 +1,4 @@
-﻿namespace TheGame.UISystems.Core
+﻿namespace Assets.XIV
 {
     public interface IUIEventListener
     {

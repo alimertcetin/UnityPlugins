@@ -1,4 +1,4 @@
-namespace XIV_Packages.PCSettingsSystem
+namespace Assets.XIV
 {
     public enum SettingQualityLevel
     {

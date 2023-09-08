@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace TheGame.UISystems.MainMenu
+namespace Assets.XIV
 {
     public class UIFocusLostBlocker : MonoBehaviour
     {

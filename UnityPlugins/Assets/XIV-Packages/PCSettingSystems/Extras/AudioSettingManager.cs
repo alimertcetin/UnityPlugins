@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+using XIV_Packages.PCSettingsSystem;
+
+namespace Assets.XIV
+{
+    public class AudioSettingManager : SettingManager
+    {
+        [SerializeField] AudioMixer mixer;
+
+        AudioSettingContainer audioSettingContainer;
+
+        public override void InitializeContainer()
+        {
+            audioSettingContainer = new AudioSettingContainer(CreateAudioSettingApplier());
+            var audioSettings = new List<ISetting>();
+            audioSettings.Add(new AudioSetting("master", 0.75f));
+            audioSettings.Add(new AudioSetting("music", 0.5f));
+            audioSettings.Add(new AudioSetting("effect", 0.5f));
+            audioSettingContainer.InitializeSettings(audioSettings);
+            audioSettingContainer.ApplyChanges();
+            audioSettingContainer.ClearUndoHistory();
+        }
+
+        public override ISettingContainer GetContainer() => audioSettingContainer;
+
+        ISettingApplier CreateAudioSettingApplier()
+        {
+            ISettingApplier settingApplier = new AudioSettingApplier();
+            settingApplier.AddApplyCommand(new AudioSettingApplyCommand(mixer));
+            return settingApplier;
+        }
+    }
+}

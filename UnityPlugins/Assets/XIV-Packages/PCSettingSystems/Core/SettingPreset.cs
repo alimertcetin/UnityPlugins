@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace Assets.XIV
 {
     public readonly struct SettingPreset : ISetting
     {
@@ -52,9 +52,10 @@ namespace XIV_Packages.PCSettingsSystem
         public override string ToString()
         {
             string presets = "";
-            foreach (var setting in presetSettings)
+            int count = presetSettings.Count;
+            for (int i = 0; i < count; i++)
             {
-                presets += setting.ToString() + ", ";
+                presets += presetSettings[i].ToString() + ", ";
             }
             presets = presets.TrimEnd(',');
             return $"{nameof(SettingPreset)}, {nameof(settingQualityLevel)} : {settingQualityLevel}, values : {presets}";

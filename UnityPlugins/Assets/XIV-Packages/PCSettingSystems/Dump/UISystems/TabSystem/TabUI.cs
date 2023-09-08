@@ -1,11 +1,10 @@
-﻿using TheGame.UISystems.Core;
-using UnityEngine;
+﻿using UnityEngine;
 using XIV.Core.TweenSystem;
 using XIV.Core.Utils;
 using XIV.EventSystem;
 using XIV.EventSystem.Events;
 
-namespace TheGame.UISystems.TabSystem
+namespace Assets.XIV
 {
     [System.Serializable]
     public struct PageData

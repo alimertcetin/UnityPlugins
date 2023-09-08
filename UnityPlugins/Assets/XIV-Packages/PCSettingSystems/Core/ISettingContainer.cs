@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using XIV_Packages.PCSettingsSystem;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace Assets.XIV
 {
     public interface ISettingContainer
     {
@@ -26,8 +27,7 @@ namespace XIV_Packages.PCSettingsSystem
         /// <summary>
         /// Applies all pending changes to <see cref="ISettingContainer"/> instance.
         /// </summary>
-        /// <param name="keepChanges">Do not clear change history</param>
-        void ApplyChanges(bool keepChanges = false);
+        void ApplyChanges();
 
         /// <summary>
         /// Returns all current settings
@@ -45,14 +45,14 @@ namespace XIV_Packages.PCSettingsSystem
         bool Undo();
 
         /// <summary>
-        /// <see langword="true"/> if redo is successful
+        /// Returns <see langword="true"/> if redo is successful
         /// </summary>
         bool Redo();
 
         /// <summary>
-        /// Clears the history
+        /// Clears the undo history
         /// </summary>
-        void ClearChangeHistory();
+        void ClearUndoHistory();
 
         bool AddListener(ISettingListener listener);
         bool RemoveListener(ISettingListener listener);

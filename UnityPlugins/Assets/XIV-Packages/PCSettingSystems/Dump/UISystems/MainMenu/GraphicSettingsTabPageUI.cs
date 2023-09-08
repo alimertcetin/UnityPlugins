@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TheGame.UISystems.Components;
-using TheGame.UISystems.TabSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,11 +7,11 @@ using UnityEngine.Pool;
 using UnityEngine.UI;
 using XIV_Packages.PCSettingsSystem;
 
-namespace TheGame.UISystems.MainMenu
+namespace Assets.XIV
 {
     public class GraphicSettingsTabPageUI : TabPageUI, ISettingListener
     {
-        [SerializeField] ScriptableObjects.Channels.SettingsChannelSO settingsLoaded;
+        [SerializeField] SettingsChannelSO settingsLoaded;
         
         [Header("UI Elements for Graphic Settings")]
         [SerializeField] XIVSettingDropdown presetDropdown;
@@ -37,23 +35,6 @@ namespace TheGame.UISystems.MainMenu
             onSettingChangeLookup.Add(typeof(TextureQualitySetting), UpdateTextureQualityDropdown);
             onSettingChangeLookup.Add(typeof(ResolutionSetting), UpdateResolutionDropdown);
             onSettingChangeLookup.Add(typeof(DisplayTypeSetting), UpdateDisplayTypeDropdown);
-        }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                graphicSettingContainer.ApplyChanges(true);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                graphicSettingContainer.Undo();
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                graphicSettingContainer.Redo();
-            }
         }
 
         void OnEnable()

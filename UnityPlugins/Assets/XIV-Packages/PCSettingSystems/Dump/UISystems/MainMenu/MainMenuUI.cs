@@ -1,7 +1,4 @@
-﻿using TheGame.SceneManagement;
-using TheGame.ScriptableObjects.Channels;
-using TheGame.UISystems.Components;
-using TheGame.UISystems.Core;
+﻿using Assets.XIV;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using XIV.Core.TweenSystem;
@@ -12,20 +9,12 @@ namespace TheGame.UISystems.MainMenu
 {
     public class MainMenuUI : GameUI
     {
-        [SerializeField] LevelDataChannelSO levelDataLoadedChannel;
-        [SerializeField] SceneLoadChannelSO sceneLoadChannel;
-
         [Header("Main Page UI Elements")]
         [SerializeField] CustomButton btn_Start;
         [SerializeField] CustomButton btn_Continue;
         [SerializeField] CustomButton btn_Settings;
         [SerializeField] CustomButton btn_Exit;
 
-        [Header("Audio")]
-        //[SerializeField] AudioPlayerSO mainMenuButtonPressAudioPlayer;
-        //[SerializeField] AudioPlayerSO mainMenuButtonSelectionAudioPlayer;
-
-        LevelData levelData;
         GameObject lastClickedButton;
 
         void Start()
@@ -35,8 +24,6 @@ namespace TheGame.UISystems.MainMenu
 
         void OnEnable()
         {
-            btn_Start.onClick.AddListener(StartNewGame);
-            btn_Continue.onClick.AddListener(ContinueGame);
             btn_Settings.onClick.AddListener(ShowSettingsPage);
             btn_Exit.onClick.AddListener(ExitGame);
 
@@ -44,14 +31,10 @@ namespace TheGame.UISystems.MainMenu
             btn_Continue.RegisterOnSelect(OnButtonPressed);
             btn_Settings.RegisterOnSelect(OnButtonPressed);
             btn_Exit.RegisterOnSelect(OnButtonPressed);
-            
-            levelDataLoadedChannel.Register(OnSceneListDataLoaded);
         }
 
         void OnDisable()
         {
-            btn_Start.onClick.RemoveListener(StartNewGame);
-            btn_Continue.onClick.RemoveListener(ContinueGame);
             btn_Settings.onClick.RemoveListener(ShowSettingsPage);
             btn_Exit.onClick.RemoveListener(ExitGame);
 
@@ -59,8 +42,6 @@ namespace TheGame.UISystems.MainMenu
             btn_Continue.UnregisterOnSelect();
             btn_Settings.UnregisterOnSelect();
             btn_Exit.UnregisterOnSelect();
-            
-            levelDataLoadedChannel.Unregister(OnSceneListDataLoaded);
         }
         
         public override void Show()
@@ -104,29 +85,6 @@ namespace TheGame.UISystems.MainMenu
         protected override void OnUIActivated()
         {
             EventSystem.current.SetSelectedGameObject(lastClickedButton ? lastClickedButton : btn_Start.gameObject);
-        }
-
-        void OnSceneListDataLoaded(LevelData levelData)
-        {
-            this.levelData = levelData;
-            this.levelData.TryGetNextLevel(-1, out var firstLevelBuildIndex);
-            btn_Continue.gameObject.SetActive(levelData.lastPlayedLevel != firstLevelBuildIndex);
-        }
-
-        void StartNewGame()
-        {
-            SaveSystem.ClearSaveDataAll();
-            PlayButtonPressSound();
-            levelData.TryGetNextLevel(-1, out var nextLevel);
-            sceneLoadChannel.RaiseEvent(SceneLoadOptions.LevelLoad(nextLevel));
-            lastClickedButton = btn_Start.gameObject;
-        }
-
-        void ContinueGame()
-        {
-            PlayButtonPressSound();
-            sceneLoadChannel.RaiseEvent(SceneLoadOptions.LevelLoad(levelData.lastPlayedLevel));
-            lastClickedButton = btn_Continue.gameObject;
         }
 
         void ShowSettingsPage()
