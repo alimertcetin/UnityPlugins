@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using XIV_Packages.PCSettingsSystem;
+using XIV_Packages.PCSettingSystems.Core;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras.SettingAppliers
 {
     public class XIVDefaultSettingApplier : ISettingApplier
     {

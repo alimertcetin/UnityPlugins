@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 // TODO : Move to XIV.Core.Extensions?
-namespace XIV_Packages.PCSettingsSystem.Extensions
+namespace XIV_Packages.PCSettingSystems.Extensions
 {
     public static class DictionaryExtensions
     {

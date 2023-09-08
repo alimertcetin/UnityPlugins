@@ -1,4 +1,6 @@
-﻿namespace Assets.XIV
+﻿using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct DisplayTypeSetting : ISetting
@@ -11,7 +13,7 @@
 
         public DisplayTypeSetting(DisplayTypeSetting displayTypeSetting)
         {
-            this.isFullScreen = displayTypeSetting.isFullScreen;
+            isFullScreen = displayTypeSetting.isFullScreen;
         }
 
         public DisplayTypeSetting(bool isFullScreen)

@@ -1,6 +1,7 @@
 using UnityEngine;
+using XIV_Packages.PCSettingSystems.Core;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras
 {
     public abstract class SettingManager : MonoBehaviour
     {

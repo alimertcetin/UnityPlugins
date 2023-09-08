@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public class XIVSettingDropdown : MonoBehaviour
     {

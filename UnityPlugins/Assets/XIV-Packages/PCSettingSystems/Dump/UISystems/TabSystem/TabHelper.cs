@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public static class TabHelper
     {

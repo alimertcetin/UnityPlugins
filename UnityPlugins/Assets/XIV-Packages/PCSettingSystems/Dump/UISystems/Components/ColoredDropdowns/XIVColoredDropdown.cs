@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public abstract class XIVColoredDropdown<T> : XIVDropdown<T>
     {

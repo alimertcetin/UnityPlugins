@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Assets.XIV;
+using XIV_Packages.PCSettingSystems.Core;
 
-namespace XIV_Packages.PCSettingsSystem.Extensions
+namespace XIV_Packages.PCSettingSystems.Extensions
 {
     public static class SettingListenerExtensions
     {

@@ -1,11 +1,10 @@
-﻿using Assets.XIV;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using XIV.Core.TweenSystem;
 using XIV.Core.Utils;
 using XIV_Packages.SaveSystems;
 
-namespace TheGame.UISystems.MainMenu
+namespace XIV_Packages.PCSettingSystems
 {
     public class MainMenuUI : GameUI
     {

@@ -3,9 +3,12 @@ using TMPro;
 using UnityEngine;
 using XIV.Core;
 using XIV.XIVEditor.Utils;
-using XIV_Packages.PCSettingsSystem;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Core.UndoSystems;
+using XIV_Packages.PCSettingSystems.Extras.ScriptableObjects.Channels;
+using XIV_Packages.PCSettingSystems.Extras.SettingContainers;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras
 {
     public struct UndoCommand : ICommand
     {

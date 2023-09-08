@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using XIV_Packages.PCSettingsSystem;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Extras.SettingAppliers;
+using XIV_Packages.PCSettingSystems.Extras.SettingApplyCommands.AudioCommands;
+using XIV_Packages.PCSettingSystems.Extras.SettingContainers;
+using XIV_Packages.PCSettingSystems.Extras.SettingDatas.AudioDatas;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras
 {
     public class AudioSettingManager : SettingManager
     {

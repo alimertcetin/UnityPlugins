@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using XIV_Packages.PCSettingSystems.Core;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct ShadowQualitySetting : ISetting
@@ -17,11 +18,11 @@ namespace Assets.XIV
 
         public ShadowQualitySetting(ShadowQualitySetting shadowQualitySetting)
         {
-            this.shadowCascades = shadowQualitySetting.shadowCascades;
-            this.shadowDistance = shadowQualitySetting.shadowDistance;
-            this.shadowmaskMode = shadowQualitySetting.shadowmaskMode;
-            this.shadowResolution = shadowQualitySetting.shadowResolution;
-            this.shadows = shadowQualitySetting.shadows;
+            shadowCascades = shadowQualitySetting.shadowCascades;
+            shadowDistance = shadowQualitySetting.shadowDistance;
+            shadowmaskMode = shadowQualitySetting.shadowmaskMode;
+            shadowResolution = shadowQualitySetting.shadowResolution;
+            shadows = shadowQualitySetting.shadows;
         }
 
         public ShadowQualitySetting(int shadowCascades, float shadowDistance, ShadowmaskMode shadowmaskMode, ShadowResolution shadowResolution, ShadowQuality shadows)

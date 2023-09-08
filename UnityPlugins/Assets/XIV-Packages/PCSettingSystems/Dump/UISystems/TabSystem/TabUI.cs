@@ -4,7 +4,7 @@ using XIV.Core.Utils;
 using XIV.EventSystem;
 using XIV.EventSystem.Events;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     [System.Serializable]
     public struct PageData

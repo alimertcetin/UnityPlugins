@@ -1,4 +1,6 @@
-﻿namespace Assets.XIV
+﻿using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct TextureQualitySetting : ISetting
@@ -14,7 +16,7 @@
 
         public TextureQualitySetting(TextureQualitySetting setting)
         {
-            this.masterTextureLimit = setting.masterTextureLimit;
+            masterTextureLimit = setting.masterTextureLimit;
         }
 
         public TextureQualitySetting(int masterTextureLimit)

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using XIV_Packages.PCSettingsSystem;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Core
 {
     public interface ISettingContainer
     {

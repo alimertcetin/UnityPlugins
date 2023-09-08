@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Assets.XIV;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Core.Commands;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace XIV_Packages.PCSettingSystems.Extras.SettingContainers
 {
     public class GraphicSettingContainer : SettingContainerBase
     {

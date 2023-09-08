@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Core
 {
     public readonly struct SettingPreset : ISetting
     {

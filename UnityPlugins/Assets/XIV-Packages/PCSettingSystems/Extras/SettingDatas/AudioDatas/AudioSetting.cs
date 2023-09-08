@@ -1,4 +1,6 @@
-﻿namespace Assets.XIV
+﻿using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.AudioDatas
 {
     [System.Serializable]
     public struct AudioSetting : ISetting
@@ -19,14 +21,14 @@
 
         public AudioSetting(AudioSetting setting)
         {
-            this.mixerParameter = setting.mixerParameter;
-            this.value01 = setting.value01;
+            mixerParameter = setting.mixerParameter;
+            value01 = setting.value01;
         }
 
         public AudioSetting(string mixerParameter, float soundLevel)
         {
             this.mixerParameter = mixerParameter;
-            this.value01 = soundLevel;
+            value01 = soundLevel;
         }
 
         public override string ToString()

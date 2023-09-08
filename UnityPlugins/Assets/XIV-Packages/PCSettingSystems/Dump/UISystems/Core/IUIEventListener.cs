@@ -1,4 +1,4 @@
-﻿namespace Assets.XIV
+﻿namespace XIV_Packages.PCSettingSystems
 {
     public interface IUIEventListener
     {

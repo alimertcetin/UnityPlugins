@@ -3,7 +3,7 @@ using UnityEngine;
 using XIV.Core.TweenSystem;
 using XIV.Core.Utils;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public enum Direction
     {

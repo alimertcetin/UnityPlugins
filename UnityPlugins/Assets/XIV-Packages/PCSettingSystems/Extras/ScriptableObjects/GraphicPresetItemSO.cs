@@ -1,6 +1,8 @@
 using UnityEngine;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras.ScriptableObjects
 {
     [CreateAssetMenu(menuName = "Test/" + nameof(GraphicPresetItemSO))]
     public class GraphicPresetItemSO : ScriptableObject

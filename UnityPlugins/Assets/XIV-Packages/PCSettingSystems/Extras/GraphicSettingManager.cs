@@ -1,7 +1,11 @@
 using UnityEngine;
-using XIV_Packages.PCSettingsSystem;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Extras.ScriptableObjects;
+using XIV_Packages.PCSettingSystems.Extras.SettingAppliers;
+using XIV_Packages.PCSettingSystems.Extras.SettingApplyCommands.GraphicCommands;
+using XIV_Packages.PCSettingSystems.Extras.SettingContainers;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Extras
 {
     public class GraphicSettingManager : SettingManager
     {

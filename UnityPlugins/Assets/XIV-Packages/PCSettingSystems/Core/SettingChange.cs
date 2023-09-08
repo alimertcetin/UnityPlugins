@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Core
 {
     public struct SettingChange
     {

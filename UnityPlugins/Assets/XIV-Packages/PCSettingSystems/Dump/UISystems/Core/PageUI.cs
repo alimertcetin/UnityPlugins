@@ -2,7 +2,7 @@
 using XIV.Core.Utils;
 using XIV.Core.TweenSystem;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public abstract class PageUI : MonoBehaviour
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine.Pool;
-using XIV_Packages.PCSettingsSystem;
-using XIV_Packages.PCSettingsSystem.Extensions;
+using XIV_Packages.PCSettingSystems.Core.UndoSystems;
+using XIV_Packages.PCSettingSystems.Extensions;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems.Core.Commands
 {
     public struct SettingChangeWithPresetCommand : ICommand
     {

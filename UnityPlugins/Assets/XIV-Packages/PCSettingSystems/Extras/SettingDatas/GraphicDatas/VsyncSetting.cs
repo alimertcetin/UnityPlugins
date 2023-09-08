@@ -1,4 +1,6 @@
-﻿namespace Assets.XIV
+﻿using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct VsyncSetting : ISetting
@@ -11,7 +13,7 @@
 
         public VsyncSetting(VsyncSetting vsyncSetting)
         {
-            this.isOn = vsyncSetting.isOn;
+            isOn = vsyncSetting.isOn;
         }
 
         public VsyncSetting(bool isOn)

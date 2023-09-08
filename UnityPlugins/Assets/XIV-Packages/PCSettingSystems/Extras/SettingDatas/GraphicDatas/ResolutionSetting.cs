@@ -1,4 +1,6 @@
-namespace Assets.XIV
+using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct ResolutionSetting : ISetting
@@ -12,8 +14,8 @@ namespace Assets.XIV
 
         public ResolutionSetting(ResolutionSetting resolutionSetting)
         {
-            this.x = resolutionSetting.x;
-            this.y = resolutionSetting.y;
+            x = resolutionSetting.x;
+            y = resolutionSetting.y;
         }
 
         public ResolutionSetting(int x, int y)

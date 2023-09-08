@@ -1,4 +1,6 @@
-﻿namespace Assets.XIV
+﻿using XIV_Packages.PCSettingSystems.Core;
+
+namespace XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas
 {
     [System.Serializable]
     public struct AntiAliasingSetting : ISetting
@@ -11,7 +13,7 @@
 
         public AntiAliasingSetting(AntiAliasingSetting setting)
         {
-            this.antiAliasing = setting.antiAliasing;
+            antiAliasing = setting.antiAliasing;
         }
 
         public AntiAliasingSetting(int antiAliasing)

@@ -1,8 +1,9 @@
-using Assets.XIV;
 using UnityEngine;
 using UnityEngine.Audio;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Extras.SettingDatas.AudioDatas;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace XIV_Packages.PCSettingSystems.Extras.SettingApplyCommands.AudioCommands
 {
     public class AudioSettingApplyCommand : ApplyCommand<AudioSetting>
     {

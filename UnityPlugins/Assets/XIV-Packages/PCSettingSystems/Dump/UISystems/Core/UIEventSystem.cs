@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public static class UIEventSystem
     {

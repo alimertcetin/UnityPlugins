@@ -5,9 +5,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Pool;
 using UnityEngine.UI;
-using XIV_Packages.PCSettingsSystem;
+using XIV_Packages.PCSettingSystems.Core;
+using XIV_Packages.PCSettingSystems.Extras.ScriptableObjects.Channels;
+using XIV_Packages.PCSettingSystems.Extras.SettingContainers;
+using XIV_Packages.PCSettingSystems.Extras.SettingDatas.GraphicDatas;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public class GraphicSettingsTabPageUI : TabPageUI, ISettingListener
     {

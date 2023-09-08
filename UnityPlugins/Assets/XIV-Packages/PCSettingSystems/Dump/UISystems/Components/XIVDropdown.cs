@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     [System.Serializable]
     public struct DropdownOptionData<T>

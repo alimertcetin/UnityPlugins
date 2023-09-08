@@ -1,6 +1,4 @@
-using Assets.XIV;
-
-namespace XIV_Packages.PCSettingsSystem
+namespace XIV_Packages.PCSettingSystems.Core
 {
     public interface ISettingListener
     {

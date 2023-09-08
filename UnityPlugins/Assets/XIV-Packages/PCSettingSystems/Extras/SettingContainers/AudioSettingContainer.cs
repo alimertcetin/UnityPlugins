@@ -1,6 +1,6 @@
-using Assets.XIV;
+using XIV_Packages.PCSettingSystems.Core;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace XIV_Packages.PCSettingSystems.Extras.SettingContainers
 {
     public class AudioSettingContainer : SettingContainerBase
     {

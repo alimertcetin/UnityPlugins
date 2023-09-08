@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public class CustomButton : Button
     {

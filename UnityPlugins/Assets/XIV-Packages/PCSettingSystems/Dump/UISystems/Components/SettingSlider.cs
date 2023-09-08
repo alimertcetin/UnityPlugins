@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.XIV
+namespace XIV_Packages.PCSettingSystems
 {
     public class SettingSlider : MonoBehaviour
     {

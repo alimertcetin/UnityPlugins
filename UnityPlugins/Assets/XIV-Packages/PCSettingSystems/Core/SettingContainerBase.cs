@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.XIV;
+using XIV_Packages.PCSettingSystems.Core.Commands;
+using XIV_Packages.PCSettingSystems.Core.UndoSystems;
 
-namespace XIV_Packages.PCSettingsSystem
+namespace XIV_Packages.PCSettingSystems.Core
 {
     public abstract class SettingContainerBase : ISettingContainer
     {
