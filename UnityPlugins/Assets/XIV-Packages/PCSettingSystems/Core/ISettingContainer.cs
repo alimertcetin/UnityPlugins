@@ -13,7 +13,7 @@ namespace XIV_Packages.PCSettingSystems.Core
         /// Returns the <typeparamref name="T"/> if found in <see cref="ISettingContainer"/>
         /// </summary>
         /// <typeparam name="T">The type of the setting</typeparam>
-        T GetSetting<T>() where T : ISetting;
+        T GetSetting<T>() where T : struct, ISetting;
 
         /// <summary>
         /// This will queue the change. To Apply the changes use <see cref="ApplyChanges"/>.
@@ -21,7 +21,7 @@ namespace XIV_Packages.PCSettingSystems.Core
         /// <typeparam name="T">Setting Type</typeparam>
         /// <param name="newValue">New value of setting</param>
         /// <returns><see langword="true"/> if setting is changed, <see langword="false"/> otherwise. false means current value is equal to the <paramref name="newValue"/></returns>
-        bool ChangeSetting<T>(T newValue) where T : ISetting;
+        bool ChangeSetting<T>(T newValue) where T : struct, ISetting;
 
         /// <summary>
         /// Applies all pending changes to <see cref="ISettingContainer"/> instance.

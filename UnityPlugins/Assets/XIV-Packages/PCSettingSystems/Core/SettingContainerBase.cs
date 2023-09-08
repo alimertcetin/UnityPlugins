@@ -33,9 +33,9 @@ namespace XIV_Packages.PCSettingSystems.Core
 
         public virtual bool HasUnappliedChange() => unappliedChanges.Count > 0;
 
-        public virtual T GetSetting<T>() where T : ISetting => (T)settings[IndexOfType(typeof(T))];
+        public virtual T GetSetting<T>() where T : struct, ISetting => (T)settings[IndexOfType(typeof(T))];
 
-        public virtual bool ChangeSetting<T>(T newValue) where T : ISetting
+        public virtual bool ChangeSetting<T>(T newValue) where T : struct, ISetting
         {
             var type = typeof(T);
             var index = IndexOfType(type);
