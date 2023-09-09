@@ -33,6 +33,8 @@ namespace XIV_Packages.PCSettingSystems.Core.Commands
             var currentValue = unappliedSettings.ContainsKey(settingType) ? unappliedSettings[settingType].to : settings[index];
             settingChange = new SettingChange(index, currentValue, setting);
             unappliedSettings.AddOrReplace(settingType, settingChange);
+
+            listeners.InformSettingChange(settingChange);
         }
 
         void ICommand.Unexecute()
