@@ -26,8 +26,10 @@ namespace XIV_Packages.PCSettingSystems.Extras.SettingAppliers
         {
             foreach (ISetting setting in settingContainer.GetSettings())
             {
-                if (setting is AudioSetting audioSetting)
+                if (setting is IAudioSetting audioSetting)
+                {
                     audioSettingApplyCommand.Apply(setting);
+                }
 #if UNITY_EDITOR
                 else
                 {

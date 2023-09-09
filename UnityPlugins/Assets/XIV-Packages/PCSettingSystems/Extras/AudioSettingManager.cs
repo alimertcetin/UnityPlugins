@@ -19,9 +19,9 @@ namespace XIV_Packages.PCSettingSystems.Extras
         {
             audioSettingContainer = new AudioSettingContainer(CreateAudioSettingApplier());
             var audioSettings = new List<ISetting>();
-            audioSettings.Add(new AudioSetting("master", 0.75f));
-            audioSettings.Add(new AudioSetting("music", 0.5f));
-            audioSettings.Add(new AudioSetting("effect", 0.5f));
+            audioSettings.Add(new MasterAudioSetting("master", 0.75f));
+            audioSettings.Add(new MusicAudioSetting("music", 0.5f));
+            audioSettings.Add(new EffectAudioSetting("effect", 0.5f));
             audioSettingContainer.InitializeSettings(audioSettings);
             audioSettingContainer.ApplyChanges();
             audioSettingContainer.ClearUndoHistory();

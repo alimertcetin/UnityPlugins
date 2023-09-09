@@ -5,7 +5,7 @@ using XIV_Packages.PCSettingSystems.Extras.SettingDatas.AudioDatas;
 
 namespace XIV_Packages.PCSettingSystems.Extras.SettingApplyCommands.AudioCommands
 {
-    public class AudioSettingApplyCommand : ApplyCommand<AudioSetting>
+    public class AudioSettingApplyCommand : ApplyCommand<IAudioSetting>
     {
         readonly AudioMixer mixer;
 
@@ -14,9 +14,9 @@ namespace XIV_Packages.PCSettingSystems.Extras.SettingApplyCommands.AudioCommand
             this.mixer = mixer;
         }
 
-        public override void Apply(AudioSetting value)
+        public override void Apply(IAudioSetting value)
         {
-            mixer.SetFloat(value.mixerParameter, Mathf.Log10(value.value01) * 20f);
+            mixer.SetFloat(value.MixerParameter, Mathf.Log10(value.Value01) * 20f);
         }
     }
 }
