@@ -23,6 +23,8 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects.Editor
                 {
                     container.itemDataPairs[i] = dataContainers[i];
                 }
+
+                EditorUtility.SetDirty(container);
             }
             
             base.OnInspectorGUI();
