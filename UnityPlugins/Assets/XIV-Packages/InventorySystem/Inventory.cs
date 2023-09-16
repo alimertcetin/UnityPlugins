@@ -182,6 +182,8 @@ namespace XIV_Packages.InventorySystem
         {
             ref InventoryItem inventoryItem = ref items[index];
             int stackLeft = inventoryItem.Item.StackableAmount - inventoryItem.Amount;
+            if (stackLeft == 0) return;
+
             int addAmount = Math.Min(stackLeft, amount);
             inventoryItem.Amount += addAmount;
             amount -= addAmount;
