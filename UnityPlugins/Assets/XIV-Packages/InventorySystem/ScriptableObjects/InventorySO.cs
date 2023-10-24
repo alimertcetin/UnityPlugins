@@ -4,11 +4,14 @@ using UnityEngine;
 
 namespace XIV_Packages.InventorySystem.ScriptableObjects
 {
+    /// <summary>
+    /// Stores the quantity and the associated itemSO
+    /// </summary>
     [System.Serializable]
     public struct ItemSOData
     {
         public ItemSO itemSO;
-        public int amount;
+        public int quantity;
     }
     
     [CreateAssetMenu(menuName = MenuPaths.BASE_MENU + nameof(InventorySO))]
@@ -22,7 +25,7 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
         {
             public string name;
             public ItemBase item;
-            public int amount;
+            public int quantity;
         }
         [SerializeField] List<RuntimeItemData> runtimeItems;
 #endif
@@ -30,39 +33,38 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
         public Inventory GetInventory()
         {
             var inventory = new Inventory(SlotCount);
-            
-            for (var i = 0; i < items.Count; i++)
-            {
-                ItemSO itemSO = items[i].itemSO;
-                int amount = items[i].amount;
-                if (amount <= 0)
-                {
-                    Debug.LogError(new InvalidOperationException("Amount cant be less than or equal to 0"));
-                    break;
-                }
 
-                bool isAdded = inventory.TryAdd(itemSO.GetItem(), ref amount);
-                if (!isAdded)
+            int itemsCount = items.Count;
+            for (var i = 0; i < itemsCount; i++)
+            {
+                var itemData = items[i];
+                if (itemData.quantity <= 0)
                 {
-                    Debug.LogError("Inventory is full! Couldnt add item at index : " + i);
+                    Debug.LogError(new InvalidOperationException("Quantity is less than or equal to 0 at index : " + i));
+                    continue;
+                }
+                
+                if (inventory.Add(itemData.itemSO.GetItem(), itemData.quantity) > 0)
+                {
+                    Debug.LogError("Inventory is full! Couldn't add the item at index : " + i);
                     break;
                 }
             }
             
 #if UNITY_EDITOR
             runtimeItems = new List<RuntimeItemData>(SlotCount);
-            for (var i = 0; i < inventory.Count; i++)
+            for (var i = 0; i < inventory.slotCount; i++)
             {
                 ReadOnlyInventoryItem item = inventory[i];
                 var runtimeItem = new RuntimeItemData
                 {
                     name = item.Item.GetType().Name.Split('.')[^1], 
-                    amount = item.Amount,
+                    quantity = item.Quantity,
                     item = item.Item,
                 };
                 runtimeItems.Add(runtimeItem);
             }
-            inventory.AddListener(new InventoryRuntimeListener(inventory, runtimeItems));
+            inventory.Register(new InventoryRuntimeListener(inventory, runtimeItems));
 #endif
             
             return inventory;
@@ -89,13 +91,13 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
             void Refresh()
             {
                 runtimeItems.Clear();
-                for (int i = 0; i < inventory.SlotCount; i++)
+                for (int i = 0; i < inventory.slotCount; i++)
                 {
                     ReadOnlyInventoryItem item = inventory[i];
                     var name = item.IsEmpty == false ? item.Item.GetType().Name.Split('.')[^1] : "Empty";
-                    var amount = item.Amount;
+                    var quantity = item.Quantity;
                     var itemBase = item.Item;
-                    var runtimeItem = new RuntimeItemData { name = name, amount = amount, item = itemBase, };
+                    var runtimeItem = new RuntimeItemData { name = name, quantity = quantity, item = itemBase, };
                     runtimeItems.Add(runtimeItem);
                 }
             }

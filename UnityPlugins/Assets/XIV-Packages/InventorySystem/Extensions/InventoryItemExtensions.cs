@@ -1,4 +1,4 @@
-﻿namespace XIV_Packages.InventorySystem
+﻿namespace XIV_Packages.InventorySystem.Extensions
 {
     public static class InventoryItemExtensions
     {
@@ -8,7 +8,7 @@
         public static InventoryItem NewInventoryItem(this ReadOnlyInventoryItem readOnlyInventoryItem)
         {
             return new InventoryItem(readOnlyInventoryItem.Index, 
-                readOnlyInventoryItem.Amount, readOnlyInventoryItem.Item);
+                readOnlyInventoryItem.Quantity, readOnlyInventoryItem.Item);
         }
         
         /// <summary>

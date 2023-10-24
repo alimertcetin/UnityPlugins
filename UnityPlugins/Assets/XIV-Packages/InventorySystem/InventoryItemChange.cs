@@ -2,14 +2,25 @@
 {
     public readonly struct InventoryItemChange
     {
-        public readonly int ChangedIndex; // same as ChangedItem.Index
-        public readonly ReadOnlyInventoryItem ChangedItem;
-        public readonly bool IsRemoved => ChangedItem.Amount <= 0;
-
-        public InventoryItemChange(int changedIndex, ReadOnlyInventoryItem changedItem)
+        /// <summary>
+        /// Before the changes
+        /// </summary>
+        public readonly ReadOnlyInventoryItem before;
+        /// <summary>
+        /// After the changes
+        /// </summary>
+        public readonly ReadOnlyInventoryItem after;
+        public readonly bool isMoved;
+        public readonly bool isMerged;
+        public readonly bool isDiscarded;
+        
+        public InventoryItemChange(ReadOnlyInventoryItem before, ReadOnlyInventoryItem after, bool isDiscarded)
         {
-            this.ChangedIndex = changedIndex;
-            this.ChangedItem = changedItem;
+            this.before = before;
+            this.after = after;
+            this.isDiscarded = isDiscarded;
+            this.isMoved = this.before.Index != this.after.Index;
+            this.isMerged = isMoved && before.Quantity < after.Quantity;
         }
     }
 }

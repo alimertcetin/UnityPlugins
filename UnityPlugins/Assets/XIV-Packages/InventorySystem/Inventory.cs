@@ -1,288 +1,389 @@
 ﻿using System;
 using System.Collections.Generic;
-using XIV.Core.Collections;
 
 namespace XIV_Packages.InventorySystem
 {
-    public delegate bool FindItemCondition<in T>(T item) where T : ItemBase;
-    
-    // TODO : Needs cleanup
     public class Inventory
     {
-        public readonly int SlotCount;
-
-        readonly InventoryItem[] items;
-        readonly bool[] emptySlots;
-        readonly List<IInventoryListener> listeners;
-        public int Count { get; private set; }
-        public ReadOnlyInventoryItem this[int index] => index < 0 || index >= SlotCount ? 
+        public int slotCount { get; private set; }
+        public ReadOnlyInventoryItem this[int index] => index < 0 || index >= slotCount ? 
             ReadOnlyInventoryItem.InvalidReadonlyInventoryItem : new ReadOnlyInventoryItem(items[index]);
 
-        readonly DynamicArray<InventoryItemChange> itemChanges;
+        /// <summary>
+        /// Defines should the listeners be informed about the changes or not.
+        /// Inventory will still record the changes when flag is disabled.
+        /// And when you enable the flag, it will inform listeners about previous changes too.
+        /// If you want to avoid that, call <see cref="ClearRecordedChanges"/> BEFORE enabling the flag.
+        /// </summary>
+        public bool informListeners
+        {
+            get => informListenersState;
+            set
+            {
+                informListenersState = value;
+                InformListeners();
+            }
+        }
+
+        readonly List<IInventoryListener> listeners;
+        readonly List<InventoryItemChange> itemChanges;
+        
+        InventoryItem[] items;
+        int arrayCapacity => items.Length;
+        int previousSlotCount;
+        bool informListenersState;
 
         public Inventory(int slotCount = 8)
         {
-            this.SlotCount = slotCount;
-            items = new InventoryItem[slotCount];
+            this.slotCount = slotCount;
+            this.previousSlotCount = slotCount;
+            int pow2 = slotCount < 2 ? 2 : InventoryHelper.NextPowerOfTwo(slotCount);
+            informListenersState = true;
             listeners = new List<IInventoryListener>(4);
-            itemChanges = new DynamicArray<InventoryItemChange>(slotCount);
-            emptySlots = new bool[slotCount];
-            for (int i = 0; i < slotCount; i++)
-            {
-                emptySlots[i] = true;
-                items[i] = new InventoryItem(i, 0, null);
-            }
+            itemChanges = new List<InventoryItemChange>(pow2);
+            items = new InventoryItem[pow2];
+            InitializeArrayValues(0, slotCount - 1);
         }
 
-        public void AddListener(IInventoryListener listener)
+        public void Register(IInventoryListener listener)
         {
-            if (listeners.IndexOf(listener) > -1) return;
+            if (listeners.Contains(listener)) return;
             listeners.Add(listener);
         }
 
-        public void RemoveListener(IInventoryListener listener)
+        public void Unregister(IInventoryListener listener)
         {
-            int index = listeners.IndexOf(listener);
-            if (index < 0) return;
-            listeners.RemoveAt(index);
-        }
-
-        void InformListeners()
-        {
-            if (itemChanges.Count == 0) return;
-            
-            int count = listeners.Count;
-            var inventoryChange = new InventoryChange(itemChanges);
-            itemChanges.Clear();
-            for (int i = 0; i < count; i++)
-            {
-                listeners[i].OnInventoryChanged(inventoryChange);
-            }
-        }
-
-        IList<InventoryItem> GetAllTypeOf<T>(FindItemCondition<T> condition) where T : ItemBase
-        {
-            var items = new DynamicArray<InventoryItem>(SlotCount);
-            for (var i = 0; i < SlotCount; i++)
-            {
-                ref InventoryItem inventoryItem = ref this.items[i];
-                if (emptySlots[i] ||
-                    inventoryItem.Item is not T item ||
-                    condition.Invoke(item) == false) continue;
-                
-                items.Add() = inventoryItem;
-            }
-
-            return items;
-        }
-
-        public IList<ReadOnlyInventoryItem> GetItemsOfType<T>(FindItemCondition<T> condition) where T : ItemBase
-        {
-            var items = new DynamicArray<ReadOnlyInventoryItem>(SlotCount);
-            for (var i = 0; i < SlotCount; i++)
-            {
-                ref InventoryItem inventoryItem = ref this.items[i];
-                if (emptySlots[i] ||
-                    inventoryItem.Item is not T item ||
-                    condition.Invoke(item) == false) continue;
-                
-                items.Add() = new ReadOnlyInventoryItem(inventoryItem);
-            }
-
-            return items;
-        }
-
-        public static InventoryItem GetMinAmount(IList<InventoryItem> items)
-        {
-            int min = int.MaxValue;
-            InventoryItem current = default;
-            int itemCount = items.Count;
-            for (var i = 0; i < itemCount; i++)
-            {
-                InventoryItem item = items[i];
-                if (item.Amount >= min) continue;
-                
-                min = item.Amount;
-                current = item;
-            }
-            return current;
-        }
-
-        public bool TryGetMinAmountOfType<T>(out T item) where T : ItemBase
-        {
-            return TryGetMinAmountOfType<T>(out item, (_) => true);
-        }
-
-        public bool TryGetMinAmountOfType<T>(out T item, FindItemCondition<T> condition) where T : ItemBase
-        {
-            var items = GetAllTypeOf(condition);
-            item = GetMinAmount(items).Item as T;
-            return items.Count > 0;
-        }
-
-        public bool Contains(ItemBase item)
-        {
-            return Contains(item, out _);
-        }
-
-        public bool Contains(ItemBase item, out int index)
-        {
-            for (var i = 0; i < SlotCount; i++)
-            {
-                if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
-                
-                index = i;
-                return true;
-            }
-            index = -1;
-            return false;
-        }
-
-        public bool CanAdd(ItemBase item, int amount)
-        {
-            for (var i = 0; i < SlotCount; i++)
-            {
-                if (amount <= 0) break;
-                if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
-
-                ref InventoryItem inventoryItem = ref items[i];
-                int stackLeft = inventoryItem.Item.StackableAmount - inventoryItem.Amount;
-                amount -= Math.Min(stackLeft, amount);
-            }
-            
-            for (int i = 0; i < SlotCount; i++)
-            {
-                if (amount <= 0) break;
-                if (emptySlots[i]) amount -= Math.Min(item.StackableAmount, amount);
-            }
-
-            return amount <= 0;
+            listeners.Remove(listener);
         }
 
         /// <summary>
-        /// Tries to add as much as possible item at giving amount
+        /// Clears the recorded changes
         /// </summary>
-        /// <returns>True if amount reaches 0 after add operation, otherwise returns false</returns>
-        public bool TryAdd(ItemBase item, ref int amount, bool informListeners = true)
+        public void ClearRecordedChanges() => itemChanges.Clear();
+
+        /// <summary>
+        /// Returns <see langword="true"/> if <see cref="Inventory"/> contains the item
+        /// </summary>
+        public bool Contains(ItemBase item)
         {
-            for (var i = 0; i < SlotCount && amount > 0; i++)
+            for (var i = 0; i < slotCount; i++)
             {
-                if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
-                
-                AddExisting(i, ref amount);
+                if (InventoryHelper.IsEqual(items[i], item) == false) continue;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Adds as much as possible item at giving <paramref name="quantity"/>
+        /// </summary>
+        /// <returns>The quantity that can't be added</returns>
+        public int Add(ItemBase item, int quantity)
+        {
+            for (var i = 0; i < slotCount && quantity > 0; i++)
+            {
+                if (InventoryHelper.IsEqual(items[i], item) == false) continue;
+                AddExisting_Internal(i, ref quantity);
+            }
+            if (quantity > 0) AddNew_Internal(item, ref quantity);
+            InformListeners();
+            return quantity;
+        }
+
+        /// <summary>
+        /// Removes as much as possible item at giving <paramref name="quantity"/>
+        /// </summary>
+        /// <returns>The quantity that can't be removed</returns>
+        public int Remove(ItemBase item, int quantity)
+        {
+            for (var i = 0; i < slotCount && quantity > 0; i++)
+            {
+                if (InventoryHelper.IsEqual(items[i], item) == false) continue;
+                RemoveAt_Internal(i, ref quantity);
             }
 
-            if (amount > 0) AddNew(item, ref amount);
-
-            if (informListeners) InformListeners();
-            return amount <= 0;
+            InformListeners();
+            return quantity;
         }
 
-        void AddExisting(int index, ref int amount)
+        /// <summary>
+        /// Clears all slots
+        /// </summary>
+        public void Clear()
         {
-            ref InventoryItem inventoryItem = ref items[index];
-            int stackLeft = inventoryItem.Item.StackableAmount - inventoryItem.Amount;
-            int addAmount = Math.Min(stackLeft, amount);
-            inventoryItem.Amount += addAmount;
-            amount -= addAmount;
-            
-            itemChanges.Add() = new InventoryItemChange(index, this[index]);
-        }
-
-        void AddNew(ItemBase item, ref int amount)
-        {
-            for (int i = 0; i < SlotCount && amount > 0; i++)
+            for (int i = 0; i < slotCount; i++)
             {
-                if (emptySlots[i] == false) continue;
-                emptySlots[i] = false;
-                
-                int addAmount = Math.Min(item.StackableAmount, amount);
-                ref InventoryItem inventoryItem = ref items[i];
-                inventoryItem.Amount = addAmount;
-                inventoryItem.Item = item;
-                amount -= addAmount;
-                Count++;
-                itemChanges.Add() = new InventoryItemChange(i, this[i]);
+                int quantity = int.MaxValue;
+                RemoveAt_Internal(i, ref quantity);
             }
-        }
-        
-        /// <returns>True if amount reaches 0 when remove operation is done</returns>
-        public bool CanRemove(ItemBase item, int amount)
-        {
-            for (var i = 0; i < SlotCount && amount > 0; i++)
-            {
-                if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
-                
-                amount -= Math.Min(items[i].Amount, amount);
-            }
-            
-            return amount <= 0;
-        }
-        
-        public bool CanRemove(IInventoryItem inventoryItem, int amount)
-        {
-            return items[inventoryItem.Index].Amount - amount >= 0;
-        }
 
-        public void Remove(ItemBase item, ref int amount)
-        {
-            for (var i = 0; i < SlotCount && amount > 0; i++)
-            {
-                if (emptySlots[i] || items[i].Item.Equals(item) == false) continue;
-                
-                Internal_RemoveAt(i, ref amount);
-            }
-            
             InformListeners();
         }
 
-        public void RemoveAt(int index, ref int amount, bool informListeners = true)
+        /// <summary>
+        /// Adds new slots for items
+        /// </summary>
+        /// <param name="count">How many slots will be added</param>
+        public void AddSlot(int count)
         {
-            if (emptySlots[index]) return;
-            Internal_RemoveAt(index, ref amount);
-            if (informListeners) InformListeners();
+            if (count <= 0) return;
+
+            var newSlotCount = slotCount + count;
+            var capacity = arrayCapacity;
+            if (capacity < newSlotCount)
+            {
+                Array.Resize(ref items, capacity * 2);
+                InitializeArrayValues(slotCount - 1, newSlotCount - 1);
+            }
+
+            ChangeSlotCount(newSlotCount);
+            InformListeners();
         }
 
-        void Internal_RemoveAt(int index, ref int amount)
+        /// <summary>
+        /// Removes slots
+        /// </summary>
+        /// <param name="count">How many slots will be removed</param>
+        public void RemoveSlot(int count)
         {
-            ref InventoryItem inventoryItem = ref items[index];
-            var removeAmount = Math.Min(inventoryItem.Amount, amount);
-            inventoryItem.Amount -= removeAmount;
-            amount -= removeAmount;
-            
-            itemChanges.Add() = new InventoryItemChange(index, this[index]);
-            if (inventoryItem.IsEmpty == false) return;
-            
-            emptySlots[index] = true;
-            Count--;
+            if (count <= 0) return;
+            int newSlotCount = slotCount - count;
+            if (newSlotCount > 0)
+            {
+                RemoveSlot_Internal(count);
+                // This will only inform them about the item changes
+                InformListeners();
+                return;
+            }
+
+            // No need to move items
+            Clear();
+            ChangeSlotCount(0);
+            InformListeners();
         }
 
+        /// <summary>
+        /// Swaps the item indices. No matter if indices are empty or not.
+        /// <seealso cref="Merge"/>
+        /// </summary>
         public void Swap(int index1, int index2)
         {
             if (index1 == index2) return;
+            Swap_Internal(index1, index2);
+            InformListeners();
+        }
+
+        /// <summary>
+        /// Merges the items at <paramref name="index1"/> and <paramref name="index2"/> if both items are same.
+        /// Doesn't do anything if one of the indices are empty.
+        /// <seealso cref="Swap"/>
+        /// </summary>
+        /// <returns>The remaining quantity at <paramref name="index1"/> if merged. -1 otherwise</returns>
+        public int Merge(int index1, int index2)
+        {
+            if (CanMerge(index1, index2) == false) return -1;
+            int remainingAtIndex1 = Merge_Internal(index1, index2);
+            InformListeners();
+            return remainingAtIndex1;
+        }
+
+        /// <summary>
+        /// This will compare items at <paramref name="index1"/> and <paramref name="index2"/> and
+        /// will return true if they are same.
+        /// </summary>
+        public bool CanMerge(int index1, int index2)
+        {
+            if (index1 == index2) return false;
+            ref InventoryItem item1 = ref items[index1];
+            ref InventoryItem item2 = ref items[index2];
+            return item1.IsEmpty == false && item2.IsEmpty == false && item1.Item.Equals(item2.Item);
+        }
+
+        void Swap_Internal(int index1, int index2)
+        {
+            var snapshot1 = GetSnapshot(index1);
+            var snapshot2 = GetSnapshot(index2);
             
             ref InventoryItem item1 = ref items[index1];
             ref InventoryItem item2 = ref items[index2];
 
-            if (item1.Item.Equals(item2.Item))
-            {
-                int addAmount = item1.Amount;
-                AddExisting(index2, ref addAmount);
-                int removeAmount = item1.Amount - addAmount;
-                Internal_RemoveAt(index1, ref removeAmount);
-            }
-            else
-            {
-                InventoryItem temp = item2;
-                item2.Amount = item1.Amount;
-                item2.Item = item1.Item;
-                item1.Amount = temp.Amount;
-                item1.Item = temp.Item;
-                itemChanges.Add() = new InventoryItemChange(index1, this[index1]);
-                itemChanges.Add() = new InventoryItemChange(index2, this[index2]);
-            }
+            InventoryItem temp = item2;
+            item2.Quantity = item1.Quantity;
+            item2.Item = item1.Item;
+            item1.Quantity = temp.Quantity;
+            item1.Item = temp.Item;
             
-            InformListeners();
+            SaveChange(snapshot1, index1, false);
+            SaveChange(snapshot2, index2, false);
+        }
+
+        int Merge_Internal(int index1, int index2)
+        {
+            int item1Quantity = items[index1].Quantity;
+            int addAmount = item1Quantity;
+            AddExisting_Internal(index2, ref addAmount);
+            int removeAmount = item1Quantity - addAmount;
+            RemoveAt_Internal(index1, ref removeAmount);
+            // The remaining quantity at index1
+            return addAmount;
+        }
+
+        void RemoveSlot_Internal(int newSlotCount)
+        {
+            // Distributes the item at itemIndex to the rest of items by starting from the last
+            // returns the remaining quantity at itemIndex
+            int DistributeItem(int itemIndex, int slotCount)
+            {
+                int remaining = int.MaxValue;
+                for (int j = slotCount - 1; j >= 0 && remaining > 0; j--)
+                {
+                    if (CanMerge(itemIndex, j))
+                    {
+                        remaining = Merge_Internal(itemIndex, j);
+                    }
+                }
+
+                return remaining;
+            }
+
+            int FindEmptyIndexFromLast(int slotCount)
+            {
+                for (int i = slotCount - 1; i >= 0; i--)
+                {
+                    if (items[i].IsEmpty) return i;
+                }
+                return -1;
+            }
+
+            for (int i = slotCount - 1; i >= newSlotCount; i--)
+            {
+                // if we completely distributed the item no need to swap or anything
+                var snapshot = GetSnapshot(i);
+                if (DistributeItem(i, newSlotCount) == 0) continue;
+
+                int emptyIndexFromLast = FindEmptyIndexFromLast(newSlotCount);
+                if (emptyIndexFromLast != -1)
+                {
+                    Swap_Internal(i, emptyIndexFromLast);
+                    continue;
+                }
+
+                SaveChange(snapshot, i, true);
+            }
+
+            ChangeSlotCount(newSlotCount);
+        }
+
+        void AddExisting_Internal(int index, ref int amount)
+        {
+            ref InventoryItem inventoryItem = ref items[index];
+            int stackLeft = inventoryItem.Item.StackableAmount - inventoryItem.Quantity;
+            if (stackLeft == 0) return;
+
+            var snapshot = GetSnapshot(index);
+            
+            int addAmount = Math.Min(stackLeft, amount);
+            inventoryItem.Quantity += addAmount;
+            amount -= addAmount;
+            
+            SaveChange(snapshot, index, false);
+        }
+
+        void AddNew_Internal(ItemBase item, ref int amount)
+        {
+            for (int i = 0; i < slotCount && amount > 0; i++)
+            {
+                ref InventoryItem inventoryItem = ref items[i];
+                if (inventoryItem.IsEmpty == false) continue;
+
+                var snapshot = GetSnapshot(i);
+                
+                int addAmount = Math.Min(item.StackableAmount, amount);
+                inventoryItem.Quantity = addAmount;
+                inventoryItem.Item = item;
+                amount -= addAmount;
+                
+                SaveChange(snapshot, i, false);
+            }
+        }
+
+        void RemoveAt_Internal(int index, ref int quantity)
+        {
+            var snapshot = GetSnapshot(index);
+            
+            ref InventoryItem inventoryItem = ref items[index];
+            var removeQuantity = Math.Min(inventoryItem.Quantity, quantity);
+            inventoryItem.Quantity -= removeQuantity;
+            quantity -= removeQuantity;
+            
+            SaveChange(snapshot, index, false);
+        }
+
+        void InformListeners()
+        {
+            if (informListenersState == false || (itemChanges.Count == 0 && previousSlotCount == slotCount)) return;
+
+            int count = listeners.Count;
+            var inventoryChange = new InventoryChange(itemChanges, previousSlotCount, slotCount);
+            for (int i = 0; i < count; i++)
+            {
+                listeners[i].OnInventoryChanged(inventoryChange);
+            }
+            InventoryHelper.Dispose(ref inventoryChange);
+            itemChanges.Clear();
+        }
+
+        void InitializeArrayValues(int startIndex, int endIndex)
+        {
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                items[i] = new InventoryItem(i, 0, null);
+            }
+        }
+
+        ReadOnlyInventoryItem GetSnapshot(int index) => new ReadOnlyInventoryItem(items[index]);
+        void SaveChange(ReadOnlyInventoryItem before, int currentIndex, bool isDiscarded)
+        {
+            itemChanges.Add(new InventoryItemChange(before, GetSnapshot(currentIndex), isDiscarded));
+        }
+
+        void ChangeSlotCount(int newCount)
+        {
+            previousSlotCount = slotCount;
+            slotCount = newCount;
+        }
+    }
+
+    public static class InventoryHelper
+    {
+        public static int NextPowerOfTwo(int v)
+        {
+            // https://stackoverflow.com/a/466242/15200285
+            // https://graphics.stanford.edu/%7Eseander/bithacks.html#RoundUpPowerOf2
+            v--;
+            v |= v >> 1;
+            v |= v >> 2;
+            v |= v >> 4;
+            v |= v >> 8;
+            v |= v >> 16;
+            v++;
+            return v;
+        }
+
+        /// <summary>
+        /// Check if <paramref name="inventoryItem"/> contains the <paramref name="item"/>
+        /// </summary>
+        public static bool IsEqual(InventoryItem inventoryItem, ItemBase item)
+        {
+            return inventoryItem.IsEmpty == false && inventoryItem.Item.Equals(item);
+        }
+
+        /// <summary>
+        /// This will avoid boxing of structs
+        /// </summary>
+        public static void Dispose<T>(ref T disposable) where T : IDisposable
+        {
+            disposable.Dispose();
         }
     }
 }

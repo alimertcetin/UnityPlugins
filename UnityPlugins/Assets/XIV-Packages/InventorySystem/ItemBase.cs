@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using XIV.Core;
 
 namespace XIV_Packages.InventorySystem
 {
@@ -17,6 +16,7 @@ namespace XIV_Packages.InventorySystem
         
         public virtual bool Equals(ItemBase other)
         {
+            // BUG : Same type but different id causes wrong comparison
             return other.id == this.id;
         }
     }
