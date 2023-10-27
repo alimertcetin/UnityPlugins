@@ -58,7 +58,7 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
                 ReadOnlyInventoryItem item = inventory[i];
                 var runtimeItem = new RuntimeItemData
                 {
-                    name = item.Item.GetType().Name.Split('.')[^1], 
+                    name = item.IsEmpty ? "EMPTY" : item.Item.GetType().Name.Split('.')[^1],
                     quantity = item.Quantity,
                     item = item.Item,
                 };
