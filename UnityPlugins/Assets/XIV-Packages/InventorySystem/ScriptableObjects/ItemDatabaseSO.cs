@@ -20,7 +20,7 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
             for (int i = 0; i < length; i++)
             {
                 var itemSO = items[i];
-                if (itemSO.GetItem().id == item.id)
+                if (itemSO.GetItem().Equals(item))
                 {
                     return itemSO;
                 }

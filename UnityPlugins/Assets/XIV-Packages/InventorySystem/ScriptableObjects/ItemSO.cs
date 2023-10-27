@@ -6,17 +6,6 @@ namespace XIV_Packages.InventorySystem.ScriptableObjects
     {
         public Sprite uiSprite;
         
-#if UNITY_EDITOR
-        [ContextMenu(nameof(GenerateID))]
-        void GenerateID()
-        {
-            UnityEditor.Undo.RegisterCompleteObjectUndo(this, "Generate ID");
-            GetItem().GenerateID();
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssetIfDirty(this);
-        }
-#endif
-
         public abstract ItemBase GetItem();
     }
 

@@ -1,23 +1,29 @@
-﻿using UnityEngine;
+﻿using System;
 
 namespace XIV_Packages.InventorySystem
 {
-    [System.Serializable]
-    public abstract class ItemBase
+    [Serializable]
+    public abstract class ItemBase : IEquatable<ItemBase>
     {
-        [field : SerializeField, DisplayWithoutEdit] public string id { get; private set; }
         public string title;
         public string description;
-        
-        [Min(1)]
         public int StackableAmount = 1;
 
-        public void GenerateID() => id = System.Guid.NewGuid().ToString();
-        
-        public virtual bool Equals(ItemBase other)
+        public bool Equals(ItemBase other)
         {
-            // BUG : Same type but different id causes wrong comparison
-            return other.id == this.id;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return title == other.title && description == other.description && StackableAmount == other.StackableAmount;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is ItemBase other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(title, description, StackableAmount);
         }
     }
 }
