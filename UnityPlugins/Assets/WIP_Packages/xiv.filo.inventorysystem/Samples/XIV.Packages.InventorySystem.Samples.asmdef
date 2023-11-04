@@ -1,0 +1,16 @@
+{
+    "name": "XIV.Packages.InventorySystem.Samples",
+    "rootNamespace": "XIV.Packages.InventorySystem.Samples",
+    "references": [
+        "GUID:9b6559d0c598eb341811a49d5b106349"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
