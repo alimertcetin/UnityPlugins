@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XIV_Packages.SaveSystems
+namespace XIV.Packages.SaveSystems
 {
     public static class AsyncSaver
     {

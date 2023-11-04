@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using XIV_Packages.InventorySystem;
+using XIV.Packages.InventorySystem;
 
 namespace XIV.Packages.InventorySystem.Samples
 {

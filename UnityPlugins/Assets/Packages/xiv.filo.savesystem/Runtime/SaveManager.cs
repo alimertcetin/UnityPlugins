@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using XIV_Packages.ScriptableObjects.Channels;
+using XIV.Packages.ScriptableObjects.Channels;
 
-namespace XIV_Packages.SaveSystems
+namespace XIV.Packages.SaveSystems
 {
     public class SaveManager : MonoBehaviour
     {

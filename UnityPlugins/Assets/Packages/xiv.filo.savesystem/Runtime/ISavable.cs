@@ -1,4 +1,4 @@
-﻿namespace XIV_Packages.SaveSystems
+﻿namespace XIV.Packages.SaveSystems
 {
     public interface ISavable
     {

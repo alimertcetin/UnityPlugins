@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using XIV.Packages.InventorySystem.Samples;
-using XIV_Packages.SaveSystems;
+using XIV.Packages.SaveSystems;
 
-namespace XIV_Packages.InventorySystem.SaveIntegration
+namespace XIV.Packages.InventorySystem.SaveIntegration
 {
     [RequireComponent(typeof(InventoryManager))]
     public class InventorySaveHandler : MonoBehaviour, ISavable

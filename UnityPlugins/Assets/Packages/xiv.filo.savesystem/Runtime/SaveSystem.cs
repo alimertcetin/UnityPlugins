@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace XIV_Packages.SaveSystems
+namespace XIV.Packages.SaveSystems
 {
     public static class SaveSystem
     {

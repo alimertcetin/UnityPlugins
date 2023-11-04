@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace XIV_Packages.SaveSystems.Editor
+namespace XIV.Packages.SaveSystems.Editor
 {
     public static class MenuItems
     {

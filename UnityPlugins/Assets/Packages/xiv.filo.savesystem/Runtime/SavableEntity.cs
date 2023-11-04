@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XIV.Core;
 
-namespace XIV_Packages.SaveSystems
+namespace XIV.Packages.SaveSystems
 {
     [DisallowMultipleComponent]
     public class SavableEntity : MonoBehaviour

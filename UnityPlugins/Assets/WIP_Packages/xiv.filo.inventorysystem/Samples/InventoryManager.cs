@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using XIV_Packages.InventorySystem;
-using XIV_Packages.InventorySystem.ScriptableObjects;
+using XIV.Packages.InventorySystem;
+using XIV.Packages.InventorySystem.ScriptableObjects;
 
 namespace XIV.Packages.InventorySystem.Samples
 {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace XIV_Packages.SaveSystems
+namespace XIV.Packages.SaveSystems
 {
     public static class XIVSerializer
     {
