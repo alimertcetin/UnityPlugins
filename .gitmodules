@@ -7,3 +7,6 @@
 [submodule "UnityPlugins/Assets/Packages/xiv.filo.so.channels"]
 	path = UnityPlugins/Assets/Packages/xiv.filo.so.channels
 	url = https://github.com/alimertcetin/xiv.filo.so.channels.git
+[submodule "UnityPlugins/Assets/Packages/xiv.filo.inventorysystem.so.channels"]
+	path = UnityPlugins/Assets/Packages/xiv.filo.inventorysystem.so.channels
+	url = https://github.com/alimertcetin/xiv.filo.inventorysystem.so.channels.git
