@@ -5,6 +5,7 @@ using XIV.Core;
 using XIV.Core.TweenSystem;
 using XIV.Core.TweenSystem.Drivers;
 using XIV.Core.Utils;
+using XIV.Core.DataStructures;
 using XIV.Core.XIVMath;
 
 namespace XIV.TweenSystem
@@ -20,6 +21,8 @@ namespace XIV.TweenSystem
         public int testCount;
         
         List<GameObject> goTestList;
+        readonly Color[] colorTransitionArr = new Color[] { Color.white, Color.cyan, Color.magenta, Color.blue };
+        Vector3[] curvePointsArr;
 
         void Awake()
         {
@@ -42,11 +45,14 @@ namespace XIV.TweenSystem
                     horizontal = 5;
                 }
             }
+
+            curvePointsArr = new Vector3[testCount * 4];
         }
 
         void Update()
         {
-            for (int i = 0; i < goTestList.Count; i++)
+            int count = goTestList.Count;
+            for (int i = 0; i < count; i++)
             {
                 if (goTestList[i].transform.HasTween())
                 {
@@ -55,29 +61,34 @@ namespace XIV.TweenSystem
             }
 
             var easing = EasingFunction.GetEasingFunction(easingFunc);
-            
-            for (int i = 0; i < goTestList.Count; i++)
+            var gizmosEnabled = UnityEditor.SceneView.lastActiveSceneView.drawGizmos;
+
+            for (int i = 0; i < count; i++)
             {
                 GameObject go = goTestList[i];
                 var testTransform = go.transform;
-                if (testTransform.HasTween())
-                {
-                    testTransform.CancelTween();
-                }
 
-                // testTransform.position -= Vector3.up * 5f;
+                var pointStartIndex = i * 4;
+                BezierMath.CreateCurveNonAlloc(testTransform.position, testTransform.position + Vector3.up * 5f, curvePointsArr, pointStartIndex);
+                var curvePointMemory = new XIVMemory<Vector3>(curvePointsArr, pointStartIndex, 4);
                 
-                Vector3[] points = BezierMath.CreateCurve(testTransform.position, testTransform.position + Vector3.up * 5f);
                 testTransform.XIVTween()
-                    .FollowCurve(points, duration, easing, true)
+                    .FollowCurve(curvePointMemory, duration, easing, true)
                     .And()
                     .Scale(testTransform.localScale, Vector3.one * 0.25f, duration * 0.5f, easing, true, loopCount:1)
                     .And()
-                    .RendererColorCurve(new Color[] { Color.white, Color.cyan, Color.magenta, Color.blue }, duration * 1.5f, easing, true)
+                    .RendererColorCurve((XIVMemory<Color>)colorTransitionArr, duration * 1.5f, easing, true)
                     .Start();
                 
-                XIVDebug.DrawSpline(points, Color.red, 10, duration);
-                // XIVDebug.DrawBezier(points[0], points[1], points[2], points[3], Color.red, duration);
+                if (gizmosEnabled)
+                {
+                    XIVDebug.DrawBezier(
+                        curvePointsArr[pointStartIndex],
+                        curvePointsArr[pointStartIndex + 1],
+                        curvePointsArr[pointStartIndex + 2],
+                        curvePointsArr[pointStartIndex + 3],
+                        Color.red, 10, duration);
+                }
 
                 // Test1(testTransform, easing);
                 // Test2(testTransform, easing);
